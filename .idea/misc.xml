@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/drawable/ic_profile_pic_svgrepo_com.xml" value="0.1445" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/drawable/ic_send_svgrepo_com.xml" value="0.1445" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/activity_main.xml" value="0.13323201621073963" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/error_dialog.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_auth.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_chat_messages.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_chats.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_login.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_sign_up.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/item_chats.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/item_message.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/item_message_in.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/item_message_out.xml" value="0.22327898550724637" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
