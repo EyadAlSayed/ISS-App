@@ -22,9 +22,6 @@ public class ErrorDialog extends Dialog
 
     @Override
     public void show() {
-
-
-
         WindowManager.LayoutParams wlp = getWindow().getAttributes();
         wlp.gravity = Gravity.CENTER;
         getWindow().setAttributes(wlp);
