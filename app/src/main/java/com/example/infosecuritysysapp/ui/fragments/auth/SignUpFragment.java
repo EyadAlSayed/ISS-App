@@ -15,16 +15,27 @@ import android.view.ViewGroup;
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentSignUpBinding;
 import com.example.infosecuritysysapp.helper.FN;
+import com.example.infosecuritysysapp.network.api.ApiClient;
+import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ISignUp;
+import com.google.gson.JsonObject;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
-public class SignUpFragment extends Fragment implements View.OnClickListener {
+public class SignUpFragment extends Fragment implements View.OnClickListener, ISignUp {
 
     FragmentSignUpBinding binding;
+
+    ISignUp iSignUp;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentSignUpBinding.inflate(inflater, container, false);
+        iSignUp = this;
         return binding.getRoot();
     }
 
@@ -39,8 +50,11 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     }
 
     private void onSignUpClicked() {
-        FN.addFixedNameFadeFragment(MAIN_FC,requireActivity(),new LoginFragment());
-
+        JsonObject jsonObject= new JsonObject();
+        jsonObject.addProperty("name",binding.userName.getText().toString());
+        jsonObject.addProperty("phoneNumber",binding.phoneNumber.getText().toString());
+        jsonObject.addProperty("password",binding.password.getText().toString());
+        iSignUp.signUp(jsonObject);
     }
 
     @Override
@@ -54,6 +68,24 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 break;
         }
 
+
+    }
+
+    @Override
+    public void signUp(JsonObject jsonObject) {
+        new ApiClient().getAPI().signup(jsonObject).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    FN.addFixedNameFadeFragment(MAIN_FC,requireActivity(),new LoginFragment());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+
+            }
+        });
 
     }
 }

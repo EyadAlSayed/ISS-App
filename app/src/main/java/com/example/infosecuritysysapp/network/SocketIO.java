@@ -13,6 +13,7 @@ public class SocketIO extends WebSocketClient {
     private static final String TAG = "SocketIO";
     public static final String BASE_URI = "ws://192.168.1.106:8081/iss";
 
+    private ISocket iSocket;
     public static SocketIO getInstance() {
         if(instance == null){
             instance = new SocketIO(URI.create(BASE_URI));
@@ -24,7 +25,8 @@ public class SocketIO extends WebSocketClient {
         super(uri);
     }
 
-    public void initWebSocketAndConnect(){
+    public void initWebSocketAndConnect(ISocket iSocket){
+        this.iSocket = iSocket;
         instance.setConnectTimeout(10000);
         instance.setReadTimeout(60000);
         instance.enableAutomaticReconnection(5000);
@@ -59,11 +61,13 @@ public class SocketIO extends WebSocketClient {
     @Override
     public void onException(Exception e) {
         Log.e(TAG, "onException: "+e);
+        instance.connect();
     }
 
     @Override
     public void onCloseReceived() {
         Log.e(TAG, "onCloseReceived: ");
+        instance.connect();
     }
 
 
