@@ -1,7 +1,6 @@
 package com.example.infosecuritysysapp.config;
 
 
-
 import static com.example.infosecuritysysapp.network.api.ApiClient.BASE_URL;
 
 import android.annotation.SuppressLint;
@@ -23,16 +22,24 @@ public class AppSharedPreferences {
         }
     }
 
-    public static void  CLEAR_DATA(){
+    public static void CLEAR_DATA() {
         spEdit.clear().apply();
     }
 
-    public  static  void  CACHE_BASE_URL(String baseUrl){
-        spEdit.putString("BASE_URL",baseUrl).apply();
+    public static void CACHE_BASE_URL(String baseUrl) {
+        spEdit.putString("BASE_URL", baseUrl).apply();
     }
 
-    public static String  GET_BASE_URL(){
-        return sp.getString("BASE_URL",BASE_URL);
+    public static void CACHE_USER_ID(int userId) {
+        spEdit.putInt("USER_ID", userId).apply();
+    }
+
+    public static String GET_BASE_URL() {
+        return sp.getString("BASE_URL", BASE_URL);
+    }
+
+    public static int GET_USER_ID() {
+        return sp.getInt("USER_ID", 0);
     }
 
 

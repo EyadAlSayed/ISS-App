@@ -28,8 +28,6 @@ public class ApiClient {
 
    public static  String BASE_URL = "http://192.168.1.106:8081/";
 
-
-
     public static Retrofit retrofit;
 
     public static TokenInterceptor interceptor = new TokenInterceptor();

@@ -10,25 +10,36 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentChatMessagesBinding;
-import com.example.infosecuritysysapp.databinding.FragmentChatsBinding;
-import com.example.infosecuritysysapp.model.ChatMessageModel;
+import com.example.infosecuritysysapp.model.PersonMessageModel;
+import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.home.adapter.ChatMessagesAdapter;
-import com.example.infosecuritysysapp.ui.fragments.home.adapter.ChatsAdapter;
+import com.example.infosecuritysysapp.ui.fragments.home.chats.presentation.IChatMessages;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
-public class ChatMessagesFragment extends Fragment {
+public class ChatMessagesFragment extends Fragment implements IChatMessages {
 
     FragmentChatMessagesBinding binding;
+    ChatMessagesAdapter adapter;
+    IChatMessages iChatMessages;
+    String phoneNumber;
+    public ChatMessagesFragment(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentChatMessagesBinding.inflate(inflater, container, false);
+        iChatMessages = this;
+        iChatMessages.getChatMessages(phoneNumber);
         return binding.getRoot();
     }
 
@@ -40,20 +51,25 @@ public class ChatMessagesFragment extends Fragment {
 
     private void initChatsRc() {
         binding.messageRc.setHasFixedSize(true);
-        ArrayList<ChatMessageModel> messageModels = new ArrayList<>();
-        messageModels.add(new ChatMessageModel(R.layout.item_message_in));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_out));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_in));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_out));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_in));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_out));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_in));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_out));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_in));
-        messageModels.add(new ChatMessageModel(R.layout.item_message_out));
-
         binding.messageRc.setLayoutManager(new LinearLayoutManager(requireContext()));
-        ChatMessagesAdapter adapter = new ChatMessagesAdapter(messageModels, requireContext());
+         adapter = new ChatMessagesAdapter(new ArrayList(), requireContext());
         binding.messageRc.setAdapter(adapter);
+    }
+
+    @Override
+    public void getChatMessages(String phoneNumber) {
+        new ApiClient().getAPI().getChatMessages(phoneNumber).enqueue(new Callback<List<PersonMessageModel>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<PersonMessageModel>> call, @NonNull Response<List<PersonMessageModel>> response) {
+                if(response.isSuccessful()){
+                    adapter.refresh(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<PersonMessageModel>> call, @NonNull Throwable t) {
+
+            }
+        });
     }
 }

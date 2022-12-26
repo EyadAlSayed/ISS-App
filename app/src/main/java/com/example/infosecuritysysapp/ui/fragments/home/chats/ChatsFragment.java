@@ -1,5 +1,6 @@
 package com.example.infosecuritysysapp.ui.fragments.home.chats;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_ID;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 
 import android.os.Bundle;
@@ -17,25 +18,31 @@ import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentChatsBinding;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
+import com.example.infosecuritysysapp.model.PersonModel;
+import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.home.adapter.ChatsAdapter;
+import com.example.infosecuritysysapp.ui.fragments.home.chats.presentation.IChats;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
-public class ChatsFragment extends Fragment {
+public class ChatsFragment extends Fragment implements IChats {
 
     FragmentChatsBinding binding;
-
-    int chatId;
-
-    public ChatsFragment(int chatId) {
-        this.chatId = chatId;
-    }
-
+    IChats iChats;
+    ChatsAdapter adapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentChatsBinding.inflate(inflater, container, false);
+        iChats = this;
+        iChats.getChats(GET_USER_ID());
         return binding.getRoot();
     }
 
@@ -43,15 +50,31 @@ public class ChatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initChatsRc();
-
     }
 
     private void initChatsRc() {
         binding.chatsRc.setHasFixedSize(true);
         binding.chatsRc.setLayoutManager(new LinearLayoutManager(requireContext()));
-        ChatsAdapter adapter = new ChatsAdapter(new ArrayList<>(), requireContext(), onChatsClicked);
+         adapter = new ChatsAdapter(new ArrayList<>(), requireContext(), onChatsClicked);
         binding.chatsRc.setAdapter(adapter);
     }
 
-    ChatsAdapter.OnChatsClicked onChatsClicked = () -> FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatMessagesFragment());
+    ChatsAdapter.OnChatsClicked onChatsClicked = (personModel, position) -> FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatMessagesFragment(personModel.phoneNumber));
+
+    @Override
+    public void getChats(int userId) {
+        new ApiClient().getAPI().getChats(userId).enqueue(new Callback<List<PersonModel>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<PersonModel>> call, @NonNull Response<List<PersonModel>> response) {
+                if(response.isSuccessful()){
+                    adapter.refresh(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<PersonModel>> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
 }

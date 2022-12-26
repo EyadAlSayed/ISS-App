@@ -9,23 +9,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.infosecuritysysapp.R;
+import com.example.infosecuritysysapp.model.PersonModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
 
-    private ArrayList<String> items;
+    private List<PersonModel> items;
     private Context context;
     private OnChatsClicked onChatsClicked;
 
 
-    public ChatsAdapter(ArrayList<String> items, Context context, OnChatsClicked onChatsClicked) {
+    public ChatsAdapter(ArrayList<PersonModel> items, Context context, OnChatsClicked onChatsClicked) {
         this.items = items;
         this.context = context;
         this.onChatsClicked = onChatsClicked;
     }
 
-    public void refresh(ArrayList<String> items) {
+    public void refresh(List<PersonModel> items) {
         this.items = items;
         this.notifyDataSetChanged();
     }
@@ -44,7 +46,7 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return 10;
+        return items.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -56,11 +58,11 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
         @Override
         public void onClick(View view) {
-            onChatsClicked.onClick();
+            onChatsClicked.onClick(items.get(getLayoutPosition()),getLayoutPosition());
         }
     }
 
     public interface OnChatsClicked{
-        void onClick();
+        void onClick(PersonModel personModel,int position);
     }
 }

@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:clipToPadding="true"
         android:paddingBottom="@dimen/_30sdp"
-        app:layout_constraintBottom_toTopOf="@+id/message_content"
+        app:layout_constraintBottom_toBottomOf="@+id/message_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,21 +22,28 @@
     <EditText
         android:id="@+id/message_content"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_50sdp"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_10sdp"
+        android:paddingStart="@dimen/_10sdp"
+        android:background="@drawable/rounded_shape"
         android:hint="message"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:elevation="@dimen/_10sdp"
         android:inputType="textMultiLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send_btn"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/send_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_10sdp"
-
+        android:elevation="@dimen/_10sdp"
+        app:borderWidth="0dp"
+        android:backgroundTint="@color/purple_500"
+        android:src="@drawable/ic_send_svgrepo_com"
         android:background="@drawable/ic_send_svgrepo_com"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
