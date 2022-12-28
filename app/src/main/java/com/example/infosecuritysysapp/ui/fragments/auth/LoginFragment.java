@@ -1,13 +1,19 @@
 package com.example.infosecuritysysapp.ui.fragments.auth;
 
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_ID;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PHONE_NUMBER;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -18,6 +24,11 @@ import android.widget.Toast;
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
+import com.example.infosecuritysysapp.helper.MyIP;
+import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
+import com.example.infosecuritysysapp.model.PersonMessageModel;
+import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
+import com.example.infosecuritysysapp.network.SocketIO;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ILogin;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
@@ -64,8 +75,20 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
         iLogin.login(jsonObject);
     }
 
-    private void onTestClicked() {
-//        SocketIO.getInstance().send(new BaseSocketModel<>("send", new PersonMessageModel(MyIP.getDeviceIp(), "0991423014", "Hi")).create());
+    private void onTestClicked() throws Exception{
+        String encryptedMessage = getEncryptedMessage();
+        SocketIO.getInstance().send(new BaseSocketModel<>("send",
+                new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), "0999999999", encryptedMessage)
+        , SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage)).create());
+    }
+
+    private String getEncryptedMessage() throws Exception {
+
+        String plainText = "This is the message I want To Encrypt.";
+
+        byte[] cipherText = SymmetricEncryptionTools.do_AESEncryption(plainText, SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
+
+        return SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -81,7 +104,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
                 break;
             }
             case R.id.test: {
-                onTestClicked();
+                try {
+                    onTestClicked();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             }
             default:
@@ -95,7 +122,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
             @Override
             public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
                 if(response.isSuccessful()){
-                    CACHE_USER_ID(jsonObject.get("userId").getAsInt());
+                    try {
+                        CACHE_USER_ID(jsonObject.get("userId").getAsInt());
+                        CACHE_USER_PHONE_NUMBER(jsonObject.get("phoneNumber").getAsString());
+                        CACHE_USER_SYMMETRIC_KEY(SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatsFragment());
                 }
             }

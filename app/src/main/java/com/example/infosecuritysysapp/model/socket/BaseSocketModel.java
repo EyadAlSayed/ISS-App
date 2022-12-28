@@ -9,10 +9,12 @@ public class BaseSocketModel<T> implements Serializable {
 
     String methodName;
     String methodBody;
+    String mac;
 
-    public BaseSocketModel(String methodName, T Body) {
+    public BaseSocketModel(String methodName, T Body, String mac) {
         this.methodName = methodName;
         this.methodBody = getJsonModel(Body);
+        this.mac = mac;
     }
 
     private String getJsonModel(T methodBody){
@@ -23,6 +25,7 @@ public class BaseSocketModel<T> implements Serializable {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("methodName",methodName);
         jsonObject.addProperty("methodBody",methodBody);
+        jsonObject.addProperty("mac", mac);
         return jsonObject.toString();
     }
 

@@ -52,7 +52,7 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages {
     private void initChatsRc() {
         binding.messageRc.setHasFixedSize(true);
         binding.messageRc.setLayoutManager(new LinearLayoutManager(requireContext()));
-         adapter = new ChatMessagesAdapter(new ArrayList(), requireContext());
+        adapter = new ChatMessagesAdapter(new ArrayList(), requireContext());
         binding.messageRc.setAdapter(adapter);
     }
 

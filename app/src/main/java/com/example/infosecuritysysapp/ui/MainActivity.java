@@ -24,7 +24,7 @@ AppNotification appNotification;
         setContentView(R.layout.activity_main);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         appNotification = new AppNotification(this);
-        SocketIO.getInstance().initWebSocketAndConnect(this);
+        SocketIO.getInstance().initWebSocketAndConnect();
         InitSharedPreferences(this);
         FN.addFixedNameFadeFragment(MAIN_FC,this,new LoginFragment());
     }
