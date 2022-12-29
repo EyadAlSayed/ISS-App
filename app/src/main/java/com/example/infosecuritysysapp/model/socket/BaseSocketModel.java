@@ -9,10 +9,16 @@ public class BaseSocketModel<T> implements Serializable {
 
    private String methodName;
    private String methodBody;
+   private String  mac;
 
     public BaseSocketModel(String methodName, T Body) {
         this.methodName = methodName;
         this.methodBody = getJsonModel(Body);
+    }
+    public BaseSocketModel(String methodName, T Body, String mac) {
+        this.methodName = methodName;
+        this.methodBody = getJsonModel(Body);
+        this.mac = mac;
     }
 
     public String getMethodName() {

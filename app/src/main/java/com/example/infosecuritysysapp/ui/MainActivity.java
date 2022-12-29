@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         setContentView(R.layout.activity_main);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         appNotification = new AppNotification(this);
-        SocketIO.getInstance().initWebSocketAndConnect();
+        SocketIO.getInstance().initWebSocketAndConnect(this);
         InitSharedPreferences(this);
         FN.addFixedNameFadeFragment(MAIN_FC, this, new LoginFragment());
     }

@@ -72,25 +72,28 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
     private void onLoginClicked() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("phoneNumber", binding.userName.getText().toString());
-        jsonObject.addProperty("password",  binding.password.getText().toString());
+        jsonObject.addProperty("password", binding.password.getText().toString());
         iLogin.login(jsonObject);
     }
 
-    private void onTestClicked() throws Exception{
-        String encryptedMessage = getEncryptedMessage();
-        SocketIO.getInstance().send(new BaseSocketModel<>("send",
-                new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), "0999999999", encryptedMessage)
-        , SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage)).create());
+    private void onTestClicked() throws Exception {
+//        String encryptedMessage = getEncryptedMessage();
+//        SocketIO.getInstance().send(
+//                new BaseSocketModel<>("send",
+//                        new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), "0999999999", encryptedMessage)
+//                        , SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage)
+//                ).create()
+//        );
     }
 
-    private String getEncryptedMessage() throws Exception {
-
-        String plainText = "This is the message I want To Encrypt.";
-
-        byte[] cipherText = SymmetricEncryptionTools.do_AESEncryption(plainText, SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
-
-        return SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
-    }
+//    private String getEncryptedMessage() throws Exception {
+//
+//        String plainText = "This is the message I want To Encrypt.";
+//
+//        byte[] cipherText = SymmetricEncryptionTools.do_AESEncryption(plainText, SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
+//
+//        return SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
+//    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -122,7 +125,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
         new ApiClient().getAPI().login(jsonObject).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     try {
                         CACHE_USER_ID(jsonObject.get("userId").getAsInt());
                         CACHE_USER_PHONE_NUMBER(jsonObject.get("phoneNumber").getAsString());
@@ -137,7 +140,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
 
             @Override
             public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
-                Toast.makeText(requireContext(),t.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }

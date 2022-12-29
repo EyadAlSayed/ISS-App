@@ -1,5 +1,8 @@
 package com.example.infosecuritysysapp.ui.fragments.home.chats;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentChatMessagesBinding;
 import com.example.infosecuritysysapp.helper.MyIP;
+import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
 import com.example.infosecuritysysapp.model.PersonMessageModel;
 import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
 import com.example.infosecuritysysapp.network.SocketIO;
@@ -95,12 +99,39 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
         adapter.addMessage(PersonMessageModel.fromJson(message));
     }
 
+
+    private PersonMessageModel getMessage(String messageContent){
+        return new PersonMessageModel(MyIP.getDeviceIp(),GET_USER_PHONE_NUMBER(),receiverPhoneNumber,messageContent,1);
+    }
     private void sendMessage() {
         String messageContent = binding.messageContent.getText().toString();
         binding.messageContent.getText().clear();
-        PersonMessageModel personMessageModel = new PersonMessageModel(MyIP.getDeviceIp(), receiverPhoneNumber, messageContent, 1);
+        PersonMessageModel personMessageModel = getMessage(messageContent);
         BaseSocketModel baseSocketModel = new BaseSocketModel<>("send", personMessageModel);
         SocketIO.getInstance().send(baseSocketModel.toJson());
+    }
+
+
+    private void sendEncryptedMessage() {
+        try {
+            String encryptedMessage = getEncryptedMessage();
+            String mac = SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage);
+            PersonMessageModel personMessageModel =getMessage(encryptedMessage);
+            SocketIO.getInstance().send(new BaseSocketModel<>("send",personMessageModel,mac).toJson());
+
+        } catch (Exception ignore) {
+
+        }
+
+    }
+
+    private String getEncryptedMessage() throws Exception {
+
+        String plainText = binding.messageContent.getText().toString();
+
+        byte[] cipherText = SymmetricEncryptionTools.do_AESEncryption(plainText, SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
+
+        return SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
     }
 
     @Override
