@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +96,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
             @Override
             public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
                 if(response.isSuccessful()){
-                    CACHE_USER_ID(jsonObject.get("userId").getAsInt());
+                    CACHE_USER_ID(response.body().get("userId").getAsInt());
                     FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatsFragment());
                 }
             }
