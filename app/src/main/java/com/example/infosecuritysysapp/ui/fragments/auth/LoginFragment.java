@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,6 +130,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    CACHE_USER_ID(response.body().get("userId").getAsInt());
                     FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatsFragment());
                 }
             }
