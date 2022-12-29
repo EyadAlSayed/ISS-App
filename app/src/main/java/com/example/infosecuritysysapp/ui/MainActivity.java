@@ -1,6 +1,7 @@
 package com.example.infosecuritysysapp.ui;
 
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
+import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.InitSharedPreferences;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
@@ -8,6 +9,8 @@ import static com.example.infosecuritysysapp.helper.encryption.EncryptionConvert
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryption;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -30,12 +33,16 @@ import javax.crypto.SecretKey;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
+import com.example.infosecuritysysapp.ui.fragments.home.chats.presentation.IChatMessages;
+
 
 
 public class MainActivity extends AppCompatActivity implements ISocket {
 
     ActivityMainBinding binding;
     AppNotification appNotification;
+    IChatMessages iChatMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,29 @@ public class MainActivity extends AppCompatActivity implements ISocket {
             e.printStackTrace();
         }
         FN.addFixedNameFadeFragment(MAIN_FC,this,new LoginFragment());
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_fcr);
+        if(currentFragment instanceof ChatsFragment) finish();
+        else
+        if(currentFragment instanceof LoginFragment) finish();
+        else super.onBackPressed();
+    }
+
+    @Override
+    public void receivedMessage(String message) {
+        appNotification.build(message);
+        if(iChatMessages != null) {
+            Toast.makeText(this,"Message Received",Toast.LENGTH_LONG).show();
+            iChatMessages.receivedMessage(message);
+        }
+    }
+
+    @Override
+    public void errorMessage(String errorMessage) {
+        runOnUiThread(() -> new ErrorDialog(MainActivity.this).setErrorMessage(errorMessage).show());
     }
 
     private void storeServerPublicKey(){
@@ -85,8 +115,7 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         // IN "LoginFragment" -> onLoginButtonClicked, SO WE CAN GET USER'S ID FROM USER'S PHONE NUMBER.
     }
 
-    @Override
-    public void receivedMessage(String message) {
-        appNotification.build(message);
+    public void initIChatMessages(IChatMessages iChatMessages){
+        this.iChatMessages = iChatMessages;
     }
 }

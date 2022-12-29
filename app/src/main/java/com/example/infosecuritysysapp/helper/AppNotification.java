@@ -29,6 +29,7 @@ public class AppNotification {
 
 
     public AppNotification(Activity activity) {
+        this.activity = activity;
         notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
 
 
@@ -36,7 +37,7 @@ public class AppNotification {
     @SuppressLint("RemoteViewLayout")
     public void build(String message) {
         RemoteViews remoteViews = new RemoteViews(activity.getPackageName(), R.layout.app_notification_layout);
-
+        remoteViews.setTextViewText(R.id.message_body,message);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
            buildOreoVersion(remoteViews);
         }

@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.infosecuritysysapp.R;
+import com.example.infosecuritysysapp.databinding.ItemChatsBinding;
+import com.example.infosecuritysysapp.model.PersonContact;
 import com.example.infosecuritysysapp.model.PersonModel;
 
 import java.util.ArrayList;
@@ -16,18 +18,18 @@ import java.util.List;
 
 public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> {
 
-    private List<PersonModel> items;
+    private List<PersonContact> items;
     private Context context;
     private OnChatsClicked onChatsClicked;
 
 
-    public ChatsAdapter(ArrayList<PersonModel> items, Context context, OnChatsClicked onChatsClicked) {
+    public ChatsAdapter(ArrayList<PersonContact> items, Context context, OnChatsClicked onChatsClicked) {
         this.items = items;
         this.context = context;
         this.onChatsClicked = onChatsClicked;
     }
 
-    public void refresh(List<PersonModel> items) {
+    public void refresh(List<PersonContact> items) {
         this.items = items;
         this.notifyDataSetChanged();
     }
@@ -35,13 +37,16 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
     @NonNull
     @Override
     public ChatsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chats, parent, false);
-        return new ViewHolder(view);
+        LayoutInflater layoutInflater =
+                LayoutInflater.from(parent.getContext());
+        ItemChatsBinding binding =
+                ItemChatsBinding.inflate(layoutInflater, parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatsAdapter.ViewHolder holder, int position) {
-
+        holder.binding.chatName.setText( items.get(position).name);
     }
 
     @Override
@@ -51,8 +56,10 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
+        ItemChatsBinding binding;
+        public ViewHolder(@NonNull ItemChatsBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
             itemView.setOnClickListener(this);
         }
 
@@ -63,6 +70,6 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
     }
 
     public interface OnChatsClicked{
-        void onClick(PersonModel personModel,int position);
+        void onClick(PersonContact personModel,int position);
     }
 }

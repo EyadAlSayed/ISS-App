@@ -9,9 +9,10 @@
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/activity_main.xml" value="0.13323201621073963" />
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/app_notification_layout.xml" value="0.22327898550724637" />
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/error_dialog.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_add_contact.xml" value="0.12395833333333334" />
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_auth.xml" value="0.22327898550724637" />
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_chat_messages.xml" value="0.176" />
-        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_chats.xml" value="0.22327898550724637" />
+        <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_chats.xml" value="0.10400000000000001" />
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_login.xml" value="0.22327898550724637" />
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/fragment_sign_up.xml" value="0.22327898550724637" />
         <entry key="..\:/AndroidStudioProjects/InfoSecuritySysApp/app/src/main/res/layout/item_chats.xml" value="0.22327898550724637" />

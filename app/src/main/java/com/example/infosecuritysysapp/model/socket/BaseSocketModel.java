@@ -7,23 +7,35 @@ import java.io.Serializable;
 
 public class BaseSocketModel<T> implements Serializable {
 
-    String methodName;
-    String methodBody;
+   private String methodName;
+   private String methodBody;
 
     public BaseSocketModel(String methodName, T Body) {
         this.methodName = methodName;
         this.methodBody = getJsonModel(Body);
     }
 
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public String getMethodBody() {
+        return methodBody;
+    }
+
     private String getJsonModel(T methodBody){
         return new Gson().toJson(methodBody);
     }
 
-    public String create(){
+    public String toJson(){
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("methodName",methodName);
         jsonObject.addProperty("methodBody",methodBody);
         return jsonObject.toString();
+    }
+
+    public static BaseSocketModel fromJson(String json){
+        return new Gson().fromJson(json,BaseSocketModel.class);
     }
 
 }
