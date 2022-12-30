@@ -30,6 +30,14 @@ public class AppSharedPreferences {
         spEdit.putString("BASE_URL", baseUrl).apply();
     }
 
+    public static void CACHE_USER_PHONE_NUMBER(String phoneNumber){
+        spEdit.putString("userPhoneNumber", phoneNumber).apply();
+    }
+
+    public static String GET_USER_PHONE(){
+        return sp.getString("userPhoneNumber", null);
+    }
+
     public static void CACHE_USER_ID(int userId) {
         spEdit.putInt("USER_ID", userId).apply();
     }

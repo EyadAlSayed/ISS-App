@@ -6,4 +6,10 @@ public class PersonMessageModel {
     public String fromUser;
     public String toUser;
     public int type;
+
+    public PersonMessageModel(String deviceIp, String fromUser, String toUser, String content){
+        this.content = content;
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+    }
 }

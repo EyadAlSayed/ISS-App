@@ -28,4 +28,7 @@ public interface API {
 
     @GET("/getChatMessages")
     Call<List<PersonMessageModel>> getChatMessages(@Query("phoneNumber")String phoneNumber);
+
+    @GET("get/server/public/key")
+    Call<String> getServerPublicKey();
 }

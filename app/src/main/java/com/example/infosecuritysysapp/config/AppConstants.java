@@ -6,7 +6,10 @@ import android.util.Patterns;
 import com.example.infosecuritysysapp.R;
 import com.google.gson.Gson;
 
+import java.security.PublicKey;
 import java.util.regex.Pattern;
+
+import javax.crypto.SecretKey;
 
 public class AppConstants {
 
@@ -18,6 +21,9 @@ public class AppConstants {
 
     public final static Pattern PHONE_NUMBER_REGEX = Pattern.compile("09\\d{8}");
     public final static Pattern EMAIL_REGEX = Patterns.EMAIL_ADDRESS;
+
+    public static PublicKey serverPublicKey;
+    public static SecretKey sessionKey;
 
 
     // shared preferences keys

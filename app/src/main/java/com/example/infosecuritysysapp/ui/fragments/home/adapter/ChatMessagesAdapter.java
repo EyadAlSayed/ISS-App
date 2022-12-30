@@ -1,14 +1,22 @@
 package com.example.infosecuritysysapp.ui.fragments.home.adapter;
 
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESDecryption;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.infosecuritysysapp.R;
+import com.example.infosecuritysysapp.config.AppConstants;
+import com.example.infosecuritysysapp.helper.encryption.EncryptionConverters;
+import com.example.infosecuritysysapp.helper.encryption.EncryptionTools;
 import com.example.infosecuritysysapp.model.PersonMessageModel;
 
 import java.util.List;
@@ -48,7 +56,11 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ChatMessagesAdapter.ViewHolder holder, int position) {
-
+        try {
+            holder.chatMessage.setText(decryptMessage(items.get(position).content));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -61,9 +73,17 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
         return items.get(position).type;
     }
 
+    private String decryptMessage(String message) throws Exception {
+        return do_AESDecryption(hexStringToByteArray(message), AppConstants.sessionKey);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView chatMessage;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            chatMessage = itemView.findViewById(R.id.chat_message);
         }
     }
 }
