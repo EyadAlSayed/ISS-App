@@ -10,16 +10,16 @@ public class PersonMessageModel implements Serializable {
     public String content;
     public String fromUser;
     public String toUser;
-    public int type;
+    public String sender;
 
     String deviceIp;
 
-    public PersonMessageModel(String deviceIp, String fromUser, String toUser, String content, int type) {
+    public PersonMessageModel(String deviceIp, String fromUser, String toUser, String content, String sender) {
         this.deviceIp = deviceIp;
         this.fromUser = fromUser;
         this.toUser = toUser;
         this.content = content;
-        this.type = type;
+        this.sender = sender;
     }
 
     public void setContent(String content) {
@@ -43,8 +43,8 @@ public class PersonMessageModel implements Serializable {
         return toUser;
     }
 
-    public int getType() {
-        return type;
+    public String getSender() {
+        return sender;
     }
 
     public static PersonMessageModel fromJson(String json) {

@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,16 +42,19 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
     IChatMessages iChatMessages;
     String receiverPhoneNumber;
 
+    boolean isEncrypted;
+
     public ChatMessagesFragment(String phoneNumber) {
         this.receiverPhoneNumber = phoneNumber;
+        this.isEncrypted = false;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentChatMessagesBinding.inflate(inflater, container, false);
-        iChatMessages.getChatMessages(receiverPhoneNumber);
         initIChatMessages();
+        iChatMessages.getChatMessages(receiverPhoneNumber);
         return binding.getRoot();
     }
 
@@ -77,13 +81,69 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
         binding.sendBtn.setOnClickListener(this);
     }
 
+    private PersonMessageModel getMessage(String messageContent) {
+        return new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), receiverPhoneNumber, messageContent, GET_USER_PHONE_NUMBER());
+    }
+
+    private void sendMessage() {
+        String messageContent = binding.messageContent.getText().toString();
+        binding.messageContent.getText().clear();
+        PersonMessageModel personMessageModel = getMessage(messageContent);
+        BaseSocketModel baseSocketModel = new BaseSocketModel<>("send", personMessageModel);
+        SocketIO.getInstance().send(baseSocketModel.toJson());
+    }
+
+    private List<PersonMessageModel> decryptedMessages(List<PersonMessageModel> items) {
+        try {
+            for (PersonMessageModel model : items) {
+                model.setContent(SymmetricEncryptionTools.do_AESDecryption(SymmetricEncryptionTools.hexStringToByteArray(model.content),
+                        SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY())));
+            }
+            return items;
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    private PersonMessageModel decryptedMessage(PersonMessageModel personMessageModel) {
+        try {
+            personMessageModel.setContent(SymmetricEncryptionTools.do_AESDecryption(SymmetricEncryptionTools.hexStringToByteArray(personMessageModel.content),
+                    SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY())));
+            return personMessageModel;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    private void sendEncryptedMessage() {
+        try {
+            String encryptedMessage = getEncryptedMessage();
+            String mac = SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage);
+            PersonMessageModel personMessageModel = getMessage(encryptedMessage);
+            SocketIO.getInstance().send(new BaseSocketModel<>("send_e", personMessageModel, mac).toJson());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String getEncryptedMessage() throws Exception {
+        String plainText = binding.messageContent.getText().toString();
+        binding.messageContent.getText().clear();
+        byte[] cipherText = SymmetricEncryptionTools.do_AESEncryption(plainText, SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
+        String message = SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
+        return message;
+    }
+
     @Override
     public void getChatMessages(String phoneNumber) {
         new ApiClient().getAPI().getChatMessages(phoneNumber).enqueue(new Callback<List<PersonMessageModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<PersonMessageModel>> call, @NonNull Response<List<PersonMessageModel>> response) {
                 if (response.isSuccessful()) {
-                    adapter.refresh(response.body());
+//                    adapter.refresh(response.body());
+                    adapter.refresh(decryptedMessages(response.body()));
                 }
             }
 
@@ -96,49 +156,22 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
 
     @Override
     public void receivedMessage(String message) {
-        adapter.addMessage(PersonMessageModel.fromJson(message));
+        if (isEncrypted)
+            requireActivity().runOnUiThread(() -> adapter.addMessage(decryptedMessage(PersonMessageModel.fromJson(message))));
+        else
+            requireActivity().runOnUiThread(() -> adapter.addMessage(PersonMessageModel.fromJson(message)));
     }
 
-
-    private PersonMessageModel getMessage(String messageContent){
-        return new PersonMessageModel(MyIP.getDeviceIp(),GET_USER_PHONE_NUMBER(),receiverPhoneNumber,messageContent,1);
-    }
-    private void sendMessage() {
-        String messageContent = binding.messageContent.getText().toString();
-        binding.messageContent.getText().clear();
-        PersonMessageModel personMessageModel = getMessage(messageContent);
-        BaseSocketModel baseSocketModel = new BaseSocketModel<>("send", personMessageModel);
-        SocketIO.getInstance().send(baseSocketModel.toJson());
-    }
-
-
-    private void sendEncryptedMessage() {
-        try {
-            String encryptedMessage = getEncryptedMessage();
-            String mac = SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage);
-            PersonMessageModel personMessageModel =getMessage(encryptedMessage);
-            SocketIO.getInstance().send(new BaseSocketModel<>("send",personMessageModel,mac).toJson());
-
-        } catch (Exception ignore) {
-
-        }
-
-    }
-
-    private String getEncryptedMessage() throws Exception {
-
-        String plainText = binding.messageContent.getText().toString();
-
-        byte[] cipherText = SymmetricEncryptionTools.do_AESEncryption(plainText, SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
-
-        return SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
+    @Override
+    public void enableEncryptedMode(boolean isEncrypted) {
+        this.isEncrypted = isEncrypted;
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.send_btn: {
-                if (!binding.messageContent.getText().toString().isEmpty()) sendMessage();
+                if (!binding.messageContent.getText().toString().isEmpty()) sendEncryptedMessage();
                 break;
             }
             default:

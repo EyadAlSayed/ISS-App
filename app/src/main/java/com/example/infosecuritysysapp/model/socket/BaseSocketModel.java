@@ -37,6 +37,7 @@ public class BaseSocketModel<T> implements Serializable {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("methodName",methodName);
         jsonObject.addProperty("methodBody",methodBody);
+        jsonObject.addProperty("mac",mac);
         return jsonObject.toString();
     }
 

@@ -19,13 +19,13 @@ public interface API {
 
 
     @POST("/signup")
-    Call<ResponseBody> signup(@Body JsonObject userObj);
+    Call<ResponseBody> signup(@Query("key")String key,@Body JsonObject userObj);
 
     @POST("/login")
     Call<JsonObject> login(@Body JsonObject loginObj);
 
     @POST("/createContact")
-    Call<ResponseBody> createContact(@Body PersonContact personContact);
+    Call<ResponseBody> createContact(@Query("userId") int userId,@Body PersonContact personContact);
 
     @GET("/getAllUserChats")
     Call<List<PersonContact>> getChats(@Query("userId")int userId);
