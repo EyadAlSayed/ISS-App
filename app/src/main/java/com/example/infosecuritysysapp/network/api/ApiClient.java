@@ -26,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     public static  String BASE_IP = "192.168.1.102:8081";
-   public static  String BASE_URL = "http://"+BASE_IP+"/";
+   public static  String BASE_URL = "https://"+BASE_IP+"/";
 
     public static Retrofit retrofit;
 
@@ -41,7 +41,6 @@ public class ApiClient {
             Gson gson = new GsonBuilder().setLenient().create();
             retrofit = new Retrofit.Builder()
                     .client(client)
-//                    .client(getUnsafeOkHttpClient())
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
