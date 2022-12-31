@@ -26,7 +26,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    public static String BASE_IP = "192.168.1.102:8081";
+    public static String BASE_IP = "192.168.1.103:8081";
     public static String BASE_URL = "https://" + BASE_IP + "/";
 
     public static Retrofit retrofit;
