@@ -84,7 +84,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
 
     @Override
     public void signUp(JsonObject jsonObject) {
-        new ApiClient().getAPI().signup(getMacKey(),jsonObject).enqueue(new Callback<ResponseBody>() {
+        new ApiClient().getAPI(requireContext()).signup(getMacKey(),jsonObject).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if(response.isSuccessful()){

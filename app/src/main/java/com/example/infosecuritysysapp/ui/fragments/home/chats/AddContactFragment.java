@@ -64,7 +64,7 @@ public class AddContactFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void addContact(PersonContact personContact) {
-        new ApiClient().getAPI().createContact(GET_USER_ID(),personContact).enqueue(new Callback<ResponseBody>() {
+        new ApiClient().getAPI(requireContext()).createContact(GET_USER_ID(),personContact).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()) FN.popTopStack(requireActivity());

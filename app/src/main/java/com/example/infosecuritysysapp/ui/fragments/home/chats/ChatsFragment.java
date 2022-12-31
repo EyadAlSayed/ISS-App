@@ -68,7 +68,7 @@ public class ChatsFragment extends Fragment implements IChats, View.OnClickListe
 
     @Override
     public void getChats(int userId) {
-        new ApiClient().getAPI().getChats(userId).enqueue(new Callback<List<PersonContact>>() {
+        new ApiClient().getAPI(requireContext()).getChats(userId).enqueue(new Callback<List<PersonContact>>() {
             @Override
             public void onResponse(@NonNull Call<List<PersonContact>> call, @NonNull Response<List<PersonContact>> response) {
                 if(response.isSuccessful()){

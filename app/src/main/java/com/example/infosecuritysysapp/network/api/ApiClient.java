@@ -1,21 +1,27 @@
 package com.example.infosecuritysysapp.network.api;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 
 
 import com.example.infosecuritysysapp.App;
 import com.example.infosecuritysysapp.BuildConfig;
+import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.config.AppSharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.readystatesoftware.chuck.ChuckInterceptor;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -31,17 +37,18 @@ public class ApiClient {
 
     public static Retrofit retrofit;
 
-    public static TokenInterceptor interceptor = new TokenInterceptor();
+    public static AppInterceptor interceptor = new AppInterceptor();
 
     public static OkHttpClient client = new OkHttpClient.Builder()
             .addInterceptor(new ChuckInterceptor(App.getContext()))
             .addInterceptor(interceptor).build();
 
-    public static Retrofit getRetrofitInstance() {
+    public static Retrofit getRetrofitInstance(Context context) {
         if (retrofit == null) {
             Gson gson = new GsonBuilder().setLenient().create();
             retrofit = new Retrofit.Builder()
                     .client(client)
+//                    .client(getSslOkHttpClient(context))
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
@@ -50,8 +57,8 @@ public class ApiClient {
         return retrofit;
     }
 
-    public API getAPI() {
-        return getRetrofitInstance().create(API.class);
+    public API getAPI(Context context) {
+        return getRetrofitInstance(context).create(API.class);
     }
 
 
@@ -77,6 +84,10 @@ public class ApiClient {
             SecureRandom secureRandom = new SecureRandom();
 
             sSLContext.init(null, arrayOfTrustManager, secureRandom);
+
+
+
+
             SSLSocketFactory sSLSocketFactory = sSLContext.getSocketFactory();
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
@@ -93,6 +104,34 @@ public class ApiClient {
         } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+
+    public static OkHttpClient getSslOkHttpClient(Context context) {
+       OkHttpClient.Builder builder = new OkHttpClient.Builder();
+       builder.readTimeout(90,TimeUnit.SECONDS);
+       builder.connectTimeout(90,TimeUnit.SECONDS);
+       builder.addInterceptor(interceptor);
+
+
+       try {
+           InputStream caFileInputStream = context.getResources().openRawResource(R.raw.iss_app);
+
+           KeyStore keyStore = KeyStore.getInstance("JKS");
+
+           keyStore.load(caFileInputStream,"123456".toCharArray());
+
+           KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
+           keyManagerFactory.init(keyStore,"123456".toCharArray());
+
+           SSLContext sslContext = SSLContext.getInstance("TLS");
+           sslContext.init(keyManagerFactory.getKeyManagers(),null, new SecureRandom());
+
+           builder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) keyManagerFactory).build();
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+       return builder.build();
     }
 
 }

@@ -126,7 +126,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
 
     @Override
     public void login(JsonObject jsonObject) {
-        new ApiClient().getAPI().login(jsonObject).enqueue(new Callback<JsonObject>() {
+        new ApiClient().getAPI(requireContext()).login(jsonObject).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
                 if (response.isSuccessful()) {

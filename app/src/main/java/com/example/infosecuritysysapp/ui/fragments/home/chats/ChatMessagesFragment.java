@@ -138,7 +138,7 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
 
     @Override
     public void getChatMessages(String phoneNumber) {
-        new ApiClient().getAPI().getChatMessages(phoneNumber).enqueue(new Callback<List<PersonMessageModel>>() {
+        new ApiClient().getAPI(requireContext()).getChatMessages(phoneNumber).enqueue(new Callback<List<PersonMessageModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<PersonMessageModel>> call, @NonNull Response<List<PersonMessageModel>> response) {
                 if (response.isSuccessful()) {
