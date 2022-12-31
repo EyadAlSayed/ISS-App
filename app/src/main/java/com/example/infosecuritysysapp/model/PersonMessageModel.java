@@ -12,6 +12,8 @@ public class PersonMessageModel implements Serializable {
     public String toUser;
     public String sender;
 
+    public String mac;
+
     String deviceIp;
 
     public PersonMessageModel(String deviceIp, String fromUser, String toUser, String content, String sender) {

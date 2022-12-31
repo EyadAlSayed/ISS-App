@@ -64,7 +64,7 @@ public class ChatsFragment extends Fragment implements IChats, View.OnClickListe
         binding.chatsRc.setAdapter(adapter);
     }
 
-    ChatsAdapter.OnChatsClicked onChatsClicked = (personModel, position) -> FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatMessagesFragment("0991423014"));
+    ChatsAdapter.OnChatsClicked onChatsClicked = (personModel, position) -> FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatMessagesFragment(personModel.phoneNumber));
 
     @Override
     public void getChats(int userId) {

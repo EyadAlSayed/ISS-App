@@ -3,22 +3,15 @@ package com.example.infosecuritysysapp.ui.fragments.auth;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_IS_LOGIN;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_ID;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PHONE_NUMBER;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,17 +20,11 @@ import android.widget.Toast;
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
-import com.example.infosecuritysysapp.helper.MyIP;
-import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
-import com.example.infosecuritysysapp.model.PersonMessageModel;
-import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
-import com.example.infosecuritysysapp.network.SocketIO;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ILogin;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
 import com.google.gson.JsonObject;
 
-import java.util.logging.Handler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -134,8 +121,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
                         CACHE_IS_LOGIN();
                         CACHE_USER_ID(response.body().get("userId").getAsInt());
                         CACHE_USER_PHONE_NUMBER(jsonObject.get("phoneNumber").getAsString());
-                        String key = SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded());
-                        CACHE_USER_SYMMETRIC_KEY(key);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

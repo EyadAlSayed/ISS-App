@@ -2,6 +2,9 @@ package com.example.infosecuritysysapp.ui.fragments.home.adapter;
 
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
+import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.do_AESDecryption;
+import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.hexStringToByteArray;
+import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.retrieveSecretKey;
 
 import android.content.Context;
 import android.os.Build;
@@ -55,7 +58,11 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ChatMessagesAdapter.ViewHolder holder, int position) {
-        holder.message.setText(items.get(position).content);
+        try {
+            holder.message.setText(getDecryptedMessage(items.get(position).content));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -67,6 +74,10 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
     public int getItemViewType(int position) {
         if (items.get(position).sender.equals(GET_USER_PHONE_NUMBER())) return 1;
         else return 2;
+    }
+
+    private String getDecryptedMessage(String message) throws Exception {
+        return do_AESDecryption(hexStringToByteArray(message), retrieveSecretKey(GET_SYMMETRIC_KEY()));
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
