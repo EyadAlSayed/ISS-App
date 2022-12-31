@@ -14,12 +14,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76c54b73-ec2b-4c86-aa56-db456be47ce0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/iss_app.jks" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/xml/certificate_config.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/keyStore/iss_app.jks" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/api/ApiClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/api/ApiClient.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,7 +209,21 @@
       <option name="project" value="LOCAL" />
       <updated>1672470600849</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="add certificate file">
+      <created>1672475104211</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1672475104211</updated>
+    </task>
+    <task id="LOCAL-00007" summary="change base url protocol to https">
+      <created>1672475151544</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1672475151544</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -231,7 +243,9 @@
     <MESSAGE value="add login &amp; signup api&#10;setup chat env&#10;add notification" />
     <MESSAGE value="merging branches" />
     <MESSAGE value="send and receive simple message&#10;send and receive encrybted message" />
-    <option name="LAST_COMMIT_MESSAGE" value="send and receive simple message&#10;send and receive encrybted message" />
+    <MESSAGE value="add certificate file" />
+    <MESSAGE value="change base url protocol to https" />
+    <option name="LAST_COMMIT_MESSAGE" value="change base url protocol to https" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
