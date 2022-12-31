@@ -1,5 +1,7 @@
 package com.example.infosecuritysysapp.ui.fragments.home.chats;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_ID;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -62,7 +64,7 @@ public class AddContactFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void addContact(PersonContact personContact) {
-        new ApiClient().getAPI().createContact(personContact).enqueue(new Callback<ResponseBody>() {
+        new ApiClient().getAPI().createContact(GET_USER_ID(),personContact).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()) FN.popTopStack(requireActivity());

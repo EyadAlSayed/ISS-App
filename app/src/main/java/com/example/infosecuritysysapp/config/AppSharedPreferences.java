@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class AppSharedPreferences {
 
@@ -26,28 +27,34 @@ public class AppSharedPreferences {
         spEdit.clear().apply();
     }
 
-    public static void CACHE_BASE_URL(String baseUrl) {
-        spEdit.putString("BASE_URL", baseUrl).apply();
-    }
-
     public static void CACHE_USER_ID(int userId) {
         spEdit.putInt("USER_ID", userId).apply();
     }
 
-    public static void CACHE_USER_PHONE_NUMBER(String phoneNumber){
+    public static void CACHE_USER_PHONE_NUMBER(String phoneNumber) {
         spEdit.putString("USER_PHONE_NUMBER", phoneNumber).apply();
     }
 
-    public static String GET_USER_PHONE_NUMBER(){
+    public static void CACHE_IS_LOGIN() {
+        spEdit.putBoolean("ISLOGIN", true);
+    }
+
+    public static boolean GET_IS_LOGIN() {
+        return sp.getBoolean("ISLOGIN", false);
+    }
+
+    public static String GET_USER_PHONE_NUMBER() {
         return sp.getString("USER_PHONE_NUMBER", null);
     }
 
-    public static void CACHE_USER_SYMMETRIC_KEY(String symmetricKey){
+    public static void CACHE_USER_SYMMETRIC_KEY(String symmetricKey) {
         sp.edit().putString("SYMMETRIC_KEY", symmetricKey).apply();
     }
 
-    public static String GET_SYMMETRIC_KEY(){
-        return sp.getString("SYMMETRIC_KEY", null);
+    public static String GET_SYMMETRIC_KEY() {
+        String key = sp.getString("SYMMETRIC_KEY", null);
+        Log.e("SocketIO", "GET_SYMMETRIC_KEY: "+key);
+        return key;
     }
 
     public static String GET_BASE_URL() {

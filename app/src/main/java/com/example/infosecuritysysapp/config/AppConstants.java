@@ -10,7 +10,11 @@ import java.util.regex.Pattern;
 
 public class AppConstants {
 
-
+    public final static String CHAT_SEND = "SEND";
+    public final static String CHAT_SEND_E = "SEND_E";
+    public final static String REG_IP = "REGIP";
+    public final static String CHAT_RECEIVED = "CHAT_REC";
+    public final static String CHAT_RECEIVED_E = "CHAT_REC_E";
 
 
     public final static Pattern EN_NAME_REGEX = Pattern.compile("[a-zA-Z]([a-zA-Z]+| )*");
@@ -18,31 +22,4 @@ public class AppConstants {
 
     public final static Pattern PHONE_NUMBER_REGEX = Pattern.compile("09\\d{8}");
     public final static Pattern EMAIL_REGEX = Patterns.EMAIL_ADDRESS;
-
-
-    // shared preferences keys
-
-    public static final String USER_ID = "user_id";
-    public static final String ACC_TOKEN ="acc_token";
-    public static final String REMEMBER_ME = "remember_me";
-    public static final String LAN = "lan";
-
-    // const function
-
-    public static String getErrorMessage(String errorAsString) {
-//        try {
-//            Log.d("content", "getErrorMessage: " + errorAsString);
-//            Gson gson = new Gson();
-//            ErrorModel errorModel = gson.fromJson(errorAsString, ErrorModel.class);
-//            return errorModel.getMessage();
-//        } catch (Exception e) {
-//            return "Failed while reading the error message";
-//        }
-        return "UnComment the function body";
-
-    }
-
-
-
-
 }

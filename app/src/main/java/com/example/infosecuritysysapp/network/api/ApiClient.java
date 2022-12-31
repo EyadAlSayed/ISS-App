@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 
 
 import com.example.infosecuritysysapp.App;
-import com.example.infosecuritysysapp.config.AppSharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.readystatesoftware.chuck.ChuckInterceptor;
@@ -30,7 +29,7 @@ public class ApiClient {
 
     public static Retrofit retrofit;
 
-    public static TokenInterceptor interceptor = new TokenInterceptor();
+    public static AppInterceptor interceptor = new AppInterceptor();
 
     public static OkHttpClient client = new OkHttpClient.Builder()
             .addInterceptor(new ChuckInterceptor(App.getContext()))

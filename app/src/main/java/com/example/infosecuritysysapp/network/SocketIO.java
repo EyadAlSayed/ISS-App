@@ -1,8 +1,18 @@
 package com.example.infosecuritysysapp.network;
 
+import static android.os.Looper.getMainLooper;
+import static com.example.infosecuritysysapp.config.AppConstants.CHAT_RECEIVED;
+import static com.example.infosecuritysysapp.config.AppConstants.CHAT_RECEIVED_E;
+import static com.example.infosecuritysysapp.config.AppConstants.CHAT_SEND;
+import static com.example.infosecuritysysapp.config.AppConstants.CHAT_SEND_E;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_IS_LOGIN;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.network.api.ApiClient.BASE_IP;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 
 import com.example.infosecuritysysapp.helper.MyIP;
 import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
@@ -15,11 +25,12 @@ public class SocketIO extends WebSocketClient {
 
     private static SocketIO instance;
     private static final String TAG = "SocketIO";
-    public static final String BASE_URI = "ws://"+BASE_IP+"/iss";
+    public static final String BASE_URI = "ws://" + BASE_IP + "/iss";
 
     private ISocket iSocket;
+
     public static SocketIO getInstance() {
-        if(instance == null){
+        if (instance == null) {
             instance = new SocketIO(URI.create(BASE_URI));
         }
         return instance;
@@ -29,8 +40,16 @@ public class SocketIO extends WebSocketClient {
         super(uri);
     }
 
-    public void initWebSocketAndConnect(ISocket iSocket){
+    public void initWebSocketAndConnect(ISocket iSocket) {
         this.iSocket = iSocket;
+        instance.setConnectTimeout(10000);
+//        instance.setReadTimeout(60000);
+        instance.enableAutomaticReconnection(5000);
+        instance.connect();
+    }
+
+    private void reInitWebSocketAndConnect() {
+        instance = new SocketIO(URI.create(BASE_URI));
         instance.setConnectTimeout(10000);
         instance.setReadTimeout(60000);
         instance.enableAutomaticReconnection(5000);
@@ -40,20 +59,32 @@ public class SocketIO extends WebSocketClient {
     @Override
     public void onOpen() {
         Log.e(TAG, "onOpen: ");
-        send(new BaseSocketModel<>("REGIP",MyIP.getDeviceIp()).toJson());
+        if (GET_IS_LOGIN())
+            send(new BaseSocketModel<>("REGIP", GET_USER_PHONE_NUMBER()).toJson());
     }
 
     @Override
     public void onTextReceived(String message) {
-        Log.e(TAG, "onTextReceived: "+message);
+        Log.e(TAG, "onTextReceived: " + message);
 
         BaseSocketModel baseSocketModel = BaseSocketModel.fromJson(message);
-        switch (baseSocketModel.getMethodName()){
-            case "CHAT_REC":{
+        switch (baseSocketModel.getMethodName().toUpperCase()) {
+            case CHAT_SEND:
+            case CHAT_RECEIVED: {
+                Log.e(TAG, "onTextReceived: S");
                 iSocket.receivedMessage(baseSocketModel.getMethodBody());
                 break;
             }
-            default:break;
+
+            case CHAT_SEND_E:
+            case CHAT_RECEIVED_E: {
+                Log.e(TAG, "onTextReceived: E");
+                iSocket.receivedMessage(baseSocketModel.getMethodBody());
+                break;
+            }
+
+            default:
+                break;
         }
     }
 
@@ -74,7 +105,8 @@ public class SocketIO extends WebSocketClient {
 
     @Override
     public void onException(Exception e) {
-        Log.e(TAG, "onException: "+e);
+        Log.e(TAG, "onException: " + e);
+
         iSocket.errorMessage(e.toString());
     }
 

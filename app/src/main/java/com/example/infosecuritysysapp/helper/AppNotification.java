@@ -59,6 +59,7 @@ public class AppNotification {
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_launcher_background));
 //                    .setContentIntent(pendingIntent);
+        builder.notify();
     }
 
     private void buildOtherVersion(RemoteViews remoteViews){
@@ -67,5 +68,6 @@ public class AppNotification {
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_launcher_background));
 //                .setContentIntent(pendingIntent)
+        builder.notify();
     }
 }

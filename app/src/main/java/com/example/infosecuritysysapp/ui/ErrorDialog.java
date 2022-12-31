@@ -21,7 +21,6 @@ public class ErrorDialog extends Dialog
     public ErrorDialog(@NonNull Context context) {
         super(context);
         setContentView(R.layout.error_dialog);
-        setCancelable(false);
         this.findViewById(R.id.done_btn).setOnClickListener(view -> dismiss());
     }
 

@@ -1,6 +1,7 @@
 package com.example.infosecuritysysapp.ui.fragments.home.adapter;
 
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 
 import android.content.Context;
 import android.os.Build;
@@ -36,30 +37,25 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
 
     public void addMessage(PersonMessageModel item) {
         this.items.add(item);
-        notifyItemChanged(items.size() - 1);
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public ChatMessagesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
-        if (viewType == R.layout.item_message_in)
+        if (viewType == 2)
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_in, parent, false);
-        else if (viewType == R.layout.item_message_out)
+        else if (viewType == 1)
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_out, parent, false);
 
         assert view != null;
         return new ChatMessagesAdapter.ViewHolder(view);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull ChatMessagesAdapter.ViewHolder holder, int position) {
-        try {
-            setDecryptedMessages();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        holder.message.setText(items.get(position).content);
     }
 
     @Override
@@ -69,14 +65,8 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
 
     @Override
     public int getItemViewType(int position) {
-        return items.get(position).type;
-    }
-
-    private void setDecryptedMessages() throws Exception {
-        for (PersonMessageModel model : items) {
-            model.setContent(SymmetricEncryptionTools.do_AESDecryption(SymmetricEncryptionTools.hexStringToByteArray(model.content),
-                    SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY())));
-        }
+        if (items.get(position).sender.equals(GET_USER_PHONE_NUMBER())) return 1;
+        else return 2;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

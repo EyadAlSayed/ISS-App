@@ -1,5 +1,6 @@
 package com.example.infosecuritysysapp.ui.fragments.auth;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_IS_LOGIN;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_ID;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
@@ -16,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,8 @@ import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ILogin;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
 import com.google.gson.JsonObject;
+
+import java.util.logging.Handler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -127,13 +131,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
             public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
                 if (response.isSuccessful()) {
                     try {
-                        CACHE_USER_ID(jsonObject.get("userId").getAsInt());
+                        CACHE_IS_LOGIN();
+                        CACHE_USER_ID(response.body().get("userId").getAsInt());
                         CACHE_USER_PHONE_NUMBER(jsonObject.get("phoneNumber").getAsString());
-                        CACHE_USER_SYMMETRIC_KEY(SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded()));
+                        String key = SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded());
+                        CACHE_USER_SYMMETRIC_KEY(key);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    CACHE_USER_ID(response.body().get("userId").getAsInt());
                     FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatsFragment());
                 }
             }
