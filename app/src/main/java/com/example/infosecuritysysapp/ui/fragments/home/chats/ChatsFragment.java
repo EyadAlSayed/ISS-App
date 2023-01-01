@@ -1,5 +1,6 @@
 package com.example.infosecuritysysapp.ui.fragments.home.chats;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CLEAR_DATA;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_ID;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 
@@ -18,8 +19,11 @@ import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentChatsBinding;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
+import com.example.infosecuritysysapp.model.PersonContact;
 import com.example.infosecuritysysapp.model.PersonModel;
 import com.example.infosecuritysysapp.network.api.ApiClient;
+import com.example.infosecuritysysapp.ui.MainActivity;
+import com.example.infosecuritysysapp.ui.fragments.auth.LoginFragment;
 import com.example.infosecuritysysapp.ui.fragments.home.adapter.ChatsAdapter;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.presentation.IChats;
 
@@ -32,7 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ChatsFragment extends Fragment implements IChats {
+public class ChatsFragment extends Fragment implements IChats, View.OnClickListener {
 
     FragmentChatsBinding binding;
     IChats iChats;
@@ -50,8 +54,13 @@ public class ChatsFragment extends Fragment implements IChats {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initChatsRc();
+        initClickListener();
     }
 
+    private void initClickListener(){
+        binding.addContact.setOnClickListener(this);
+        binding.logout.setOnClickListener(this);
+    }
     private void initChatsRc() {
         binding.chatsRc.setHasFixedSize(true);
         binding.chatsRc.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -63,18 +72,33 @@ public class ChatsFragment extends Fragment implements IChats {
 
     @Override
     public void getChats(int userId) {
-        new ApiClient().getAPI().getChats(userId).enqueue(new Callback<List<PersonModel>>() {
+        new ApiClient().getAPI().getChats(userId).enqueue(new Callback<List<PersonContact>>() {
             @Override
-            public void onResponse(@NonNull Call<List<PersonModel>> call, @NonNull Response<List<PersonModel>> response) {
+            public void onResponse(@NonNull Call<List<PersonContact>> call, @NonNull Response<List<PersonContact>> response) {
                 if(response.isSuccessful()){
                     adapter.refresh(response.body());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<PersonModel>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<PersonContact>> call, @NonNull Throwable t) {
 
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.add_contact:{
+                FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new AddContactFragment());
+                break;
+            }
+            case R.id.logout:{
+                CLEAR_DATA();
+                FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new LoginFragment());
+            }
+            default:break;
+        }
     }
 }

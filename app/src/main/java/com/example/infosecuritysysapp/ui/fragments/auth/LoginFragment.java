@@ -1,14 +1,9 @@
 package com.example.infosecuritysysapp.ui.fragments.auth;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_IS_LOGIN;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_ID;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
-import static com.example.infosecuritysysapp.helper.encryption.DigitalSignatureTools.createDigitalSignature;
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrievePrivateKey;
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESEncryption;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -23,20 +18,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.infosecuritysysapp.R;
-import com.example.infosecuritysysapp.config.AppConstants;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
-import com.example.infosecuritysysapp.helper.MyIP;
-import com.example.infosecuritysysapp.helper.encryption.DigitalSignatureTools;
-import com.example.infosecuritysysapp.helper.encryption.EncryptionConverters;
-import com.example.infosecuritysysapp.helper.encryption.EncryptionTools;
-import com.example.infosecuritysysapp.model.PersonMessageModel;
-import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
-import com.example.infosecuritysysapp.network.SocketIO;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ILogin;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
 import com.google.gson.JsonObject;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,7 +53,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
     private void initClickEvent() {
         binding.signup.setOnClickListener(this);
         binding.loginBtn.setOnClickListener(this);
-        binding.test.setOnClickListener(this);
     }
 
     private void onSignUpClicked() {
@@ -75,23 +62,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
     private void onLoginClicked() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("phoneNumber", binding.userName.getText().toString());
-        jsonObject.addProperty("password",  binding.password.getText().toString());
+        jsonObject.addProperty("password", binding.password.getText().toString());
         iLogin.login(jsonObject);
     }
 
-    private void onTestClicked() throws Exception{
-        String encryptedMessage = encryptMessage();
-        String digitalSignature = convertByteToHexadecimal(createDigitalSignature(hexStringToByteArray(encryptedMessage), retrievePrivateKey(GET_USER_PRIVATE_KEY())));
-        SocketIO.getInstance().send(
-        new BaseSocketModel<>(
-        "send"
-        , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE(), "09999999999", encryptedMessage, digitalSignature)).create());
-    }
 
-    private String encryptMessage() throws Exception {
-        String message = "Hello Ab Ayham";
-        return convertByteToHexadecimal(do_AESEncryption(message, AppConstants.sessionKey));
-    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -105,14 +80,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
                 onLoginClicked();
                 break;
             }
-            case R.id.test: {
-                try {
-                    onTestClicked();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
+
             default:
                 break;
         }
@@ -123,15 +91,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
         new ApiClient().getAPI().login(jsonObject).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(@NonNull Call<JsonObject> call, @NonNull Response<JsonObject> response) {
-                if(response.isSuccessful()){
-                    CACHE_USER_ID(jsonObject.get("userId").getAsInt());
+                if (response.isSuccessful()) {
+                    try {
+                        CACHE_IS_LOGIN();
+                        CACHE_USER_ID(response.body().get("userId").getAsInt());
+                        CACHE_USER_PHONE_NUMBER(jsonObject.get("phoneNumber").getAsString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new ChatsFragment());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
-                Toast.makeText(requireContext(),t.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -7,17 +7,28 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.example.infosecuritysysapp.R;
 
+import org.w3c.dom.Text;
+
 public class ErrorDialog extends Dialog
 {
+
     public ErrorDialog(@NonNull Context context) {
         super(context);
         setContentView(R.layout.error_dialog);
-        setCancelable(false);
+        this.findViewById(R.id.done_btn).setOnClickListener(view -> dismiss());
+    }
+
+
+    public ErrorDialog setErrorMessage(String errorMessage){
+        TextView view = this.findViewById(R.id.error_txt);
+        view.setText(errorMessage);
+        return this;
     }
 
     @Override

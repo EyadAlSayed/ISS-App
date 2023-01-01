@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.fragments.auth.LoginFragment">
+    tools:context=".ui.fragments.home.chats.AddContactFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -12,16 +12,16 @@
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginEnd="@dimen/_20sdp"
@@ -32,18 +32,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:padding="@dimen/_10sdp">
 
 
                     <TextView
                         android:id="@+id/textView145"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Login"
+                        android:text="Add Contact"
                         android:textSize="@dimen/_16ssp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +52,32 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/user_name_textlayout"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:focusableInTouchMode="true"
+                        android:hint="User name"
+                        app:boxBackgroundMode="filled"
+                        app:layout_constraintEnd_toEndOf="@+id/textView145"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView145">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/user_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/white"
+                            android:focusableInTouchMode="true"
+                            android:inputType="text"
+                            android:maxLength="10"
+                            android:padding="@dimen/_22sdp"
+                            android:textSize="@dimen/_12ssp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/phone_number_textlayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_10sdp"
                         android:focusableInTouchMode="true"
@@ -62,7 +88,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/textView145">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/user_name"
+                            android:id="@+id/phone_number"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@color/white"
@@ -75,40 +101,16 @@
 
                     <View
                         android:id="@+id/view3"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="@dimen/_1sdp"
                         app:layout_constraintEnd_toEndOf="@+id/user_name_textlayout"
                         app:layout_constraintStart_toStartOf="@+id/user_name_textlayout"
                         app:layout_constraintTop_toBottomOf="@+id/user_name_textlayout" />
 
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/password_textlayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:focusableInTouchMode="true"
-                        android:hint="Password"
-                        app:boxBackgroundMode="filled"
-                        app:layout_constraintEnd_toEndOf="@+id/user_name_textlayout"
-                        app:layout_constraintStart_toStartOf="@+id/user_name_textlayout"
-                        app:layout_constraintTop_toBottomOf="@+id/user_name_textlayout"
-                        app:passwordToggleEnabled="true">
-
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/password"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="@dimen/_10sdp"
-                            android:background="@color/white"
-                            android:inputType="textPassword"
-                            android:padding="@dimen/_22sdp"
-                            android:textSize="@dimen/_12ssp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
                     <View
                         android:id="@+id/view11"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="@dimen/_1sdp"
                         app:layout_constraintEnd_toEndOf="@+id/password_textlayout"
                         app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +118,7 @@
 
 
                     <Button
-                        android:id="@+id/login_btn"
+                        android:id="@+id/add_contact_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_20sdp"
@@ -124,8 +126,8 @@
                         android:layout_marginEnd="@dimen/_20sdp"
                         android:layout_marginBottom="@dimen/_5sdp"
                         android:background="@drawable/rounded_shape"
+                        android:text="Add"
                         app:backgroundTint="@color/purple_500"
-                        android:text="Login"
                         android:textAlignment="center"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
@@ -135,23 +137,9 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/view11" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
-
-            <Button
-                android:id="@+id/signup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_shape"
-                android:text="SignUp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/purple_500"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

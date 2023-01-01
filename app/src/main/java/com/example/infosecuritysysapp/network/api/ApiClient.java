@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 
 
 import com.example.infosecuritysysapp.App;
-import com.example.infosecuritysysapp.config.AppSharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.readystatesoftware.chuck.ChuckInterceptor;
@@ -25,12 +24,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-
-   public static  String BASE_URL = "http://192.168.1.106:8081/";
+    public static  String BASE_IP = "192.168.43.122:8081";
+   public static  String BASE_URL = "http://"+BASE_IP+"/";
 
     public static Retrofit retrofit;
 
-    public static TokenInterceptor interceptor = new TokenInterceptor();
+    public static AppInterceptor interceptor = new AppInterceptor();
 
     public static OkHttpClient client = new OkHttpClient.Builder()
             .addInterceptor(new ChuckInterceptor(App.getContext()))

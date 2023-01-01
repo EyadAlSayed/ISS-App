@@ -1,5 +1,6 @@
 package com.example.infosecuritysysapp.ui.fragments.auth;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentSignUpBinding;
 import com.example.infosecuritysysapp.helper.FN;
+import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ISignUp;
 import com.google.gson.JsonObject;
@@ -57,6 +59,15 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
         iSignUp.signUp(jsonObject);
     }
 
+    private String getSymmetricKey(){
+        try {
+            return SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -73,10 +84,12 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
 
     @Override
     public void signUp(JsonObject jsonObject) {
-        new ApiClient().getAPI().signup(jsonObject).enqueue(new Callback<ResponseBody>() {
+        String key = getSymmetricKey();
+        new ApiClient().getAPI().signup(key, jsonObject).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if(response.isSuccessful()){
+                    CACHE_USER_SYMMETRIC_KEY(key);
                     FN.addFixedNameFadeFragment(MAIN_FC,requireActivity(),new LoginFragment());
                 }
             }

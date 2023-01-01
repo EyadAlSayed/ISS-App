@@ -6,6 +6,9 @@ import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_U
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PUBLIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CLEAR_DATA;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_IS_LOGIN;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.InitSharedPreferences;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
@@ -13,8 +16,22 @@ import static com.example.infosecuritysysapp.helper.encryption.EncryptionConvert
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionKeysUtils.generateRSAKeyPair;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryption;
 
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
+
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
+import android.widget.Toast;
+
 import android.widget.Toast;
 
 import com.example.infosecuritysysapp.R;
@@ -38,12 +55,17 @@ import javax.crypto.SecretKey;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatMessagesFragment;
+import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
+import com.example.infosecuritysysapp.ui.fragments.home.chats.presentation.IChatMessages;
 
 
 public class MainActivity extends AppCompatActivity implements ISocket {
 
     ActivityMainBinding binding;
     AppNotification appNotification;
+    IChatMessages iChatMessages;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +84,23 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        FN.addFixedNameFadeFragment(MAIN_FC,this,new LoginFragment());
+        openFragment();
+    }
+
+    private void openFragment() {
+        if (GET_IS_LOGIN()) {
+            FN.addFixedNameFadeFragment(MAIN_FC, this, new ChatsFragment());
+        } else {
+            FN.addFixedNameFadeFragment(MAIN_FC, this, new LoginFragment());
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_fcr);
+        if (currentFragment instanceof ChatsFragment) finish();
+        else if (currentFragment instanceof LoginFragment) finish();
+        else super.onBackPressed();
     }
 
     private void createKeyPairsAndSendPublicKey() throws Exception {
@@ -111,6 +149,24 @@ public class MainActivity extends AppCompatActivity implements ISocket {
 
     @Override
     public void receivedMessage(String message) {
-        appNotification.build(message);
+        if (iChatMessages != null) {
+            iChatMessages.receivedMessage(message);
+        }
     }
+
+    @Override
+    public void successfulSend(String message) {
+        runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
+    }
+
+    @Override
+    public void errorMessage(String errorMessage) {
+//        runOnUiThread(() -> new ErrorDialog(MainActivity.this).setErrorMessage(errorMessage).show());
+    }
+
+    public void initIChatMessages(IChatMessages iChatMessages) {
+        this.iChatMessages = iChatMessages;
+    }
+
+
 }
