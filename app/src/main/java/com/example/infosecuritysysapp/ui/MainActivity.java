@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         setContentView(R.layout.activity_main);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         appNotification = new AppNotification(this);
-        SocketIO.getInstance().initWebSocketAndConnect(this);
+        SocketIO.getInstance().initWebSocketAndConnect(this,this);
         InitSharedPreferences(this);
         openFragment();
         initClickListener();

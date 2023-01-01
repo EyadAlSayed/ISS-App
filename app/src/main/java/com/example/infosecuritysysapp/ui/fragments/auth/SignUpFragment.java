@@ -78,8 +78,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
             default:
                 break;
         }
-
-
     }
 
     @Override

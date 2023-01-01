@@ -145,7 +145,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
 
             @Override
             public void onFailure(@NonNull Call<JsonObject> call, @NonNull Throwable t) {
-                Toast.makeText(requireContext(), t.toString(), Toast.LENGTH_LONG).show();
+                Log.e("EYAD", "onFailure: "+t );
+              Toast.makeText(requireContext(),t.toString(),Toast.LENGTH_LONG).show();
             }
         });
     }

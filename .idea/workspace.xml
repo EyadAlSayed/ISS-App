@@ -14,18 +14,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76c54b73-ec2b-4c86-aa56-db456be47ce0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/raw/iss_app_2.p12" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/SocketIO.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/SocketIO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/api/ApiClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/api/ApiClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/auth/LoginFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/auth/LoginFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/auth/SignUpFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/auth/SignUpFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/chats/AddContactFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/chats/AddContactFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/chats/ChatMessagesFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/chats/ChatMessagesFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/chats/ChatsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/chats/ChatsFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/xml/certificate_config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/xml/certificate_config.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +32,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[R58M47XZH6A]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Lenovo\.android\avd\Pixel_2_XL_API_30.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -59,12 +58,12 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="resourceFile" />
         <option value="Interface" />
         <option value="layoutResourceFile" />
         <option value="Class" />
         <option value="Class" />
         <option value="layoutResourceFile" />
-        <option value="resourceFile" />
       </list>
     </option>
   </component>
@@ -211,35 +210,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672301650328</updated>
     </task>
-    <task id="LOCAL-00005" summary="send and receive simple message&#10;send and receive encrybted message">
-      <created>1672470600849</created>
+    <task id="LOCAL-00005" summary="fix signup method">
+      <created>1672489581088</created>
       <option name="number" value="00005" />
       <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1672470600849</updated>
+      <updated>1672489581088</updated>
     </task>
-    <task id="LOCAL-00006" summary="add certificate file">
-      <created>1672475104211</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1672475104211</updated>
-    </task>
-    <task id="LOCAL-00007" summary="change base url protocol to https">
-      <created>1672475151544</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1672475151544</updated>
-    </task>
-    <task id="LOCAL-00008" summary="merging branches">
-      <created>1672482385622</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1672482385622</updated>
-    </task>
-    <option name="localTasksCounter" value="9" />
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -257,11 +235,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix" />
     <MESSAGE value="add login &amp; signup api&#10;setup chat env&#10;add notification" />
-    <MESSAGE value="send and receive simple message&#10;send and receive encrybted message" />
-    <MESSAGE value="add certificate file" />
-    <MESSAGE value="change base url protocol to https" />
     <MESSAGE value="merging branches" />
-    <option name="LAST_COMMIT_MESSAGE" value="merging branches" />
+    <MESSAGE value="fix signup method" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix signup method" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
