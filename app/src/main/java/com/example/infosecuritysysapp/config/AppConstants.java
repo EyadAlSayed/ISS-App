@@ -18,6 +18,7 @@ public class AppConstants {
     public final static String REG_IP = "REGIP";
     public final static String CHAT_RECEIVED = "CHAT_REC";
     public final static String CHAT_RECEIVED_E = "CHAT_REC_E";
+    public final static String STORING = "STORING";
 
 
     public final static Pattern EN_NAME_REGEX = Pattern.compile("[a-zA-Z]([a-zA-Z]+| )*");
