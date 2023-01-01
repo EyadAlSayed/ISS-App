@@ -69,7 +69,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
     @Override
     public void onBindViewHolder(@NonNull ChatMessagesAdapter.ViewHolder holder, int position) {
         try {
-            holder.chatMessage.setText(decryptMessage(items.get(position).content));
+            holder.chatMessage.setText(getDecryptedMessage(items.get(position)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,9 +91,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
                 SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
     }
 
-    private String decryptMessage(String message) throws Exception {
-        return do_AESDecryption(hexStringToByteArray(message), AppConstants.sessionKey);
-    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 

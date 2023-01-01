@@ -3,11 +3,9 @@ package com.example.infosecuritysysapp.ui;
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PUBLIC_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PUBLIC_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.CLEAR_DATA;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_IS_LOGIN;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.InitSharedPreferences;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         createKeyPairs();
         SocketIO.getInstance().send(new BaseSocketModel<>
                 ("storing"
-                , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE(), null, GET_USER_PUBLIC_KEY())).create());
+                , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, GET_USER_PUBLIC_KEY(),GET_USER_PHONE_NUMBER())).toJson());
     }
 
     private void createKeyPairs() throws Exception {
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
         AppConstants.sessionKey = sessionKey;
         String encryptedSessionKey = convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey));
-        SocketIO.getInstance().send(new BaseSocketModel<>("handshaking", new PersonMessageModel(MyIP.getDeviceIp(), null, null, encryptedSessionKey)).create());
+        SocketIO.getInstance().send(new BaseSocketModel<>("handshaking", new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, encryptedSessionKey,GET_USER_PHONE_NUMBER())).toJson());
         // IF WE CAN'T GET USER'S ID FROM DEVICE IP IN SERVER.. THEN THIS FUNCTION SHOULD BE WRITTEN
         // IN "LoginFragment" -> onLoginButtonClicked, SO WE CAN GET USER'S ID FROM USER'S PHONE NUMBER.
     }

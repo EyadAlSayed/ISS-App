@@ -2,6 +2,12 @@ package com.example.infosecuritysysapp.ui.fragments.home.chats;
 
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
+import static com.example.infosecuritysysapp.helper.encryption.DigitalSignatureTools.createDigitalSignature;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrievePrivateKey;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESEncryption;
 
 import android.os.Bundle;
 
@@ -16,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.infosecuritysysapp.R;
+import com.example.infosecuritysysapp.config.AppConstants;
 import com.example.infosecuritysysapp.databinding.FragmentChatMessagesBinding;
 import com.example.infosecuritysysapp.helper.MyIP;
 import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
@@ -122,12 +129,34 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
             String mac = SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage);
             PersonMessageModel personMessageModel = getMessage(encryptedMessage);
             SocketIO.getInstance().send(new BaseSocketModel<>("send_e", personMessageModel, mac).toJson());
-            adapter.addMessage(new PersonMessageModel(MyIP.getDeviceIp(),GET_USER_PHONE_NUMBER(),receiverPhoneNumber,encryptedMessage,GET_USER_PHONE_NUMBER()));
+            adapter.addMessage(new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), receiverPhoneNumber, encryptedMessage, GET_USER_PHONE_NUMBER()));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+
+    private void send4EncryptedMessage() {
+        String encryptedMessage = null;
+        try {
+            encryptedMessage = encryptMessage();
+
+            String digitalSignature = convertByteToHexadecimal(createDigitalSignature(hexStringToByteArray(encryptedMessage), retrievePrivateKey(GET_USER_PRIVATE_KEY())));
+            SocketIO.getInstance().send(
+                    new BaseSocketModel<>(
+                            "send"
+                            , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), receiverPhoneNumber, encryptedMessage, GET_USER_PHONE_NUMBER(),digitalSignature)).toJson());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String encryptMessage() throws Exception {
+        String message = binding.messageContent.getText().toString();
+        return convertByteToHexadecimal(do_AESEncryption(message, AppConstants.sessionKey));
+    }
+
 
     private String getEncryptedMessage() throws Exception {
         String plainText = binding.messageContent.getText().toString();
@@ -171,7 +200,7 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.send_btn: {
-                if (!binding.messageContent.getText().toString().isEmpty()) sendEncryptedMessage();
+                if (!binding.messageContent.getText().toString().isEmpty()) send4EncryptedMessage();
                 break;
             }
             default:

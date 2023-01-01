@@ -12,6 +12,7 @@ public class PersonMessageModel implements Serializable {
     public String toUser;
     public String sender;
 
+    public String digitalSignature;
     public String mac;
 
     String deviceIp;
@@ -23,6 +24,15 @@ public class PersonMessageModel implements Serializable {
         this.content = content;
         this.sender = sender;
     }
+    public PersonMessageModel(String deviceIp, String fromUser, String toUser, String content, String sender,String digitalSignature) {
+        this.deviceIp = deviceIp;
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+        this.content = content;
+        this.sender = sender;
+        this.digitalSignature = digitalSignature;
+    }
+
 
     public void setContent(String content) {
         this.content = content;
