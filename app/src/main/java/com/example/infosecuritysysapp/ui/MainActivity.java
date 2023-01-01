@@ -1,5 +1,6 @@
 package com.example.infosecuritysysapp.ui;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CLEAR_DATA;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_IS_LOGIN;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.InitSharedPreferences;
@@ -44,11 +45,9 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        appNotification = new AppNotification(this);
         SocketIO.getInstance().initWebSocketAndConnect(this);
         InitSharedPreferences(this);
         openFragment();
-        initClickListener();
     }
 
     private void openFragment() {
@@ -75,20 +74,17 @@ public class MainActivity extends AppCompatActivity implements ISocket {
     }
 
     @Override
+    public void successfulSend(String message) {
+        runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
+    }
+
+    @Override
     public void errorMessage(String errorMessage) {
 //        runOnUiThread(() -> new ErrorDialog(MainActivity.this).setErrorMessage(errorMessage).show());
     }
 
     public void initIChatMessages(IChatMessages iChatMessages) {
         this.iChatMessages = iChatMessages;
-    }
-
-    private void initClickListener() {
-        binding.logout.setOnClickListener(view -> {
-            CLEAR_DATA();
-            FN.addFixedNameFadeFragment(MAIN_FC, MainActivity.this, new LoginFragment());
-        });
-        binding.encButton.setOnCheckedChangeListener((compoundButton, isCheck) -> iChatMessages.enableEncryptedMode(isCheck));
     }
 
 

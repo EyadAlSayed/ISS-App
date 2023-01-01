@@ -40,17 +40,6 @@
                 android:layout_height="wrap_content"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-            <Button
-                android:id="@+id/logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_18sdp"
-                android:elevation="@dimen/_10sdp"
-                android:textColor="@color/white"
-                android:text="LogOut"
-                android:textAllCaps="false"
-                app:backgroundTint="@color/purple_500"
-              />
 
 
         </LinearLayout>

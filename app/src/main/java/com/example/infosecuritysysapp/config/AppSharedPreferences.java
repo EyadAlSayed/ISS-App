@@ -52,9 +52,7 @@ public class AppSharedPreferences {
     }
 
     public static String GET_SYMMETRIC_KEY() {
-        String key = sp.getString("SYMMETRIC_KEY", null);
-        Log.e("SocketIO", "GET_SYMMETRIC_KEY: "+key);
-        return key;
+        return sp.getString("SYMMETRIC_KEY", null);
     }
 
     public static String GET_BASE_URL() {

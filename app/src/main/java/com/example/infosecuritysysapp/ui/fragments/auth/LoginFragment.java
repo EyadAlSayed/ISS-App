@@ -53,7 +53,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
     private void initClickEvent() {
         binding.signup.setOnClickListener(this);
         binding.loginBtn.setOnClickListener(this);
-        binding.test.setOnClickListener(this);
     }
 
     private void onSignUpClicked() {
@@ -67,24 +66,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
         iLogin.login(jsonObject);
     }
 
-    private void onTestClicked() throws Exception {
-//        String encryptedMessage = getEncryptedMessage();
-//        SocketIO.getInstance().send(
-//                new BaseSocketModel<>("send",
-//                        new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), "0999999999", encryptedMessage)
-//                        , SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage)
-//                ).create()
-//        );
-    }
 
-//    private String getEncryptedMessage() throws Exception {
-//
-//        String plainText = "This is the message I want To Encrypt.";
-//
-//        byte[] cipherText = SymmetricEncryptionTools.do_AESEncryption(plainText, SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
-//
-//        return SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
-//    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -98,14 +80,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
                 onLoginClicked();
                 break;
             }
-            case R.id.test: {
-                try {
-                    onTestClicked();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
+
             default:
                 break;
         }

@@ -76,10 +76,15 @@ public class SocketIO extends WebSocketClient {
                 break;
             }
 
-            case CHAT_SEND_E:
-            case CHAT_RECEIVED_E: {
+            case CHAT_SEND_E: {
                 Log.e(TAG, "onTextReceived: E");
                 iSocket.receivedMessage(baseSocketModel.getMethodBody());
+                break;
+            }
+
+            case CHAT_RECEIVED_E:{
+                Log.e(TAG, "onTextReceived: "+CHAT_RECEIVED_E );
+                iSocket.successfulSend(baseSocketModel.getMethodBody());
                 break;
             }
 

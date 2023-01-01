@@ -1,5 +1,6 @@
 package com.example.infosecuritysysapp.ui.fragments.home.chats;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CLEAR_DATA;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_ID;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 
@@ -21,6 +22,8 @@ import com.example.infosecuritysysapp.helper.FN;
 import com.example.infosecuritysysapp.model.PersonContact;
 import com.example.infosecuritysysapp.model.PersonModel;
 import com.example.infosecuritysysapp.network.api.ApiClient;
+import com.example.infosecuritysysapp.ui.MainActivity;
+import com.example.infosecuritysysapp.ui.fragments.auth.LoginFragment;
 import com.example.infosecuritysysapp.ui.fragments.home.adapter.ChatsAdapter;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.presentation.IChats;
 
@@ -56,6 +59,7 @@ public class ChatsFragment extends Fragment implements IChats, View.OnClickListe
 
     private void initClickListener(){
         binding.addContact.setOnClickListener(this);
+        binding.logout.setOnClickListener(this);
     }
     private void initChatsRc() {
         binding.chatsRc.setHasFixedSize(true);
@@ -89,6 +93,10 @@ public class ChatsFragment extends Fragment implements IChats, View.OnClickListe
             case R.id.add_contact:{
                 FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new AddContactFragment());
                 break;
+            }
+            case R.id.logout:{
+                CLEAR_DATA();
+                FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new LoginFragment());
             }
             default:break;
         }
