@@ -3,8 +3,12 @@ package com.example.infosecuritysysapp.ui;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SYMMETRIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CLEAR_DATA;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_IS_LOGIN;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.InitSharedPreferences;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
+import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.do_AESDecryption;
+import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.hexStringToByteArray;
+import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.retrieveSecretKey;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -25,6 +29,7 @@ import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.ActivityMainBinding;
 import com.example.infosecuritysysapp.helper.AppNotification;
 import com.example.infosecuritysysapp.helper.FN;
+import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
 import com.example.infosecuritysysapp.network.ISocket;
 import com.example.infosecuritysysapp.network.SocketIO;
 import com.example.infosecuritysysapp.ui.fragments.auth.LoginFragment;
@@ -75,7 +80,16 @@ public class MainActivity extends AppCompatActivity implements ISocket {
 
     @Override
     public void successfulSend(String message) {
-        runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
+        runOnUiThread(() -> Toast.makeText(MainActivity.this, decryptMessage(message), Toast.LENGTH_LONG).show());
+    }
+
+    private String decryptMessage(String message){
+        try {
+            return do_AESDecryption(hexStringToByteArray(message), retrieveSecretKey(GET_SYMMETRIC_KEY()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

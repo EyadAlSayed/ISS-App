@@ -48,7 +48,7 @@ public class AppSharedPreferences {
     }
 
     public static void CACHE_USER_SYMMETRIC_KEY(String symmetricKey) {
-        sp.edit().putString("SYMMETRIC_KEY", symmetricKey).apply();
+        spEdit.putString("SYMMETRIC_KEY", symmetricKey).apply();
     }
 
     public static String GET_SYMMETRIC_KEY() {
