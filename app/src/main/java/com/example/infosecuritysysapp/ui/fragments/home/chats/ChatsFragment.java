@@ -18,7 +18,6 @@ import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentChatsBinding;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
-import com.example.infosecuritysysapp.model.PersonContact;
 import com.example.infosecuritysysapp.model.PersonModel;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.home.adapter.ChatsAdapter;
@@ -33,7 +32,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ChatsFragment extends Fragment implements IChats, View.OnClickListener {
+public class ChatsFragment extends Fragment implements IChats {
 
     FragmentChatsBinding binding;
     IChats iChats;
@@ -51,12 +50,8 @@ public class ChatsFragment extends Fragment implements IChats, View.OnClickListe
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initChatsRc();
-        initClickListener();
     }
 
-    private void initClickListener(){
-        binding.addContact.setOnClickListener(this);
-    }
     private void initChatsRc() {
         binding.chatsRc.setHasFixedSize(true);
         binding.chatsRc.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -68,29 +63,18 @@ public class ChatsFragment extends Fragment implements IChats, View.OnClickListe
 
     @Override
     public void getChats(int userId) {
-        new ApiClient().getAPI().getChats(userId).enqueue(new Callback<List<PersonContact>>() {
+        new ApiClient().getAPI().getChats(userId).enqueue(new Callback<List<PersonModel>>() {
             @Override
-            public void onResponse(@NonNull Call<List<PersonContact>> call, @NonNull Response<List<PersonContact>> response) {
+            public void onResponse(@NonNull Call<List<PersonModel>> call, @NonNull Response<List<PersonModel>> response) {
                 if(response.isSuccessful()){
                     adapter.refresh(response.body());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<PersonContact>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<PersonModel>> call, @NonNull Throwable t) {
 
             }
         });
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.add_contact:{
-                FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new AddContactFragment());
-                break;
-            }
-            default:break;
-        }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.infosecuritysysapp.network.api;
 
 
-import com.example.infosecuritysysapp.model.PersonContact;
 import com.example.infosecuritysysapp.model.PersonMessageModel;
 import com.example.infosecuritysysapp.model.PersonModel;
 import com.google.gson.JsonObject;
@@ -24,11 +23,8 @@ public interface API {
     @POST("/login")
     Call<JsonObject> login(@Body JsonObject loginObj);
 
-    @POST("/createContact")
-    Call<ResponseBody> createContact(@Body PersonContact personContact);
-
     @GET("/getAllUserChats")
-    Call<List<PersonContact>> getChats(@Query("userId")int userId);
+    Call<List<PersonModel>> getChats(@Query("userId")int userId);
 
     @GET("/getChatMessages")
     Call<List<PersonMessageModel>> getChatMessages(@Query("phoneNumber")String phoneNumber);

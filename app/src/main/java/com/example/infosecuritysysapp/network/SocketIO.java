@@ -1,11 +1,6 @@
 package com.example.infosecuritysysapp.network;
 
-import static com.example.infosecuritysysapp.network.api.ApiClient.BASE_IP;
-
 import android.util.Log;
-
-import com.example.infosecuritysysapp.helper.MyIP;
-import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
 
 import java.net.URI;
 
@@ -13,9 +8,10 @@ import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class SocketIO extends WebSocketClient {
 
+
     private static SocketIO instance;
     private static final String TAG = "SocketIO";
-    public static final String BASE_URI = "ws://"+BASE_IP+"/iss";
+    public static final String BASE_URI = "ws://192.168.1.106:8081/iss";
 
     private ISocket iSocket;
     public static SocketIO getInstance() {
@@ -40,21 +36,11 @@ public class SocketIO extends WebSocketClient {
     @Override
     public void onOpen() {
         Log.e(TAG, "onOpen: ");
-        send(new BaseSocketModel<>("REGIP",MyIP.getDeviceIp()).toJson());
     }
 
     @Override
     public void onTextReceived(String message) {
-        Log.e(TAG, "onTextReceived: "+message);
-
-        BaseSocketModel baseSocketModel = BaseSocketModel.fromJson(message);
-        switch (baseSocketModel.getMethodName()){
-            case "CHAT_REC":{
-                iSocket.receivedMessage(baseSocketModel.getMethodBody());
-                break;
-            }
-            default:break;
-        }
+        Log.e(TAG, "onTextReceived: ");
     }
 
     @Override
@@ -75,7 +61,7 @@ public class SocketIO extends WebSocketClient {
     @Override
     public void onException(Exception e) {
         Log.e(TAG, "onException: "+e);
-        iSocket.errorMessage(e.toString());
+        instance.connect();
     }
 
     @Override
