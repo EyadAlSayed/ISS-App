@@ -122,6 +122,8 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
             String mac = SymmetricEncryptionTools.getMac(GET_SYMMETRIC_KEY(), encryptedMessage);
             PersonMessageModel personMessageModel = getMessage(encryptedMessage);
             SocketIO.getInstance().send(new BaseSocketModel<>("send_e", personMessageModel, mac).toJson());
+            String message = binding.messageContent.getText().toString();
+            adapter.addMessage(new PersonMessageModel(MyIP.getDeviceIp(),GET_USER_PHONE_NUMBER(),receiverPhoneNumber,message,GET_USER_PHONE_NUMBER()));
         } catch (Exception e) {
             e.printStackTrace();
         }
