@@ -5,6 +5,7 @@ public class PersonMessageModel {
     public   String content;
     public String fromUser;
     public String toUser;
+    public String digitalSignature;
     public int type;
 
     public PersonMessageModel(String deviceIp, String fromUser, String toUser, String content){

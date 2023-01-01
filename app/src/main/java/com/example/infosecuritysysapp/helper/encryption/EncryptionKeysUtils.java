@@ -1,5 +1,7 @@
 package com.example.infosecuritysysapp.helper.encryption;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 
 import javax.crypto.KeyGenerator;
@@ -15,5 +17,15 @@ public class EncryptionKeysUtils {
 
         keygenerator.init(128, securerandom);
         return keygenerator.generateKey();
+    }
+
+    public static KeyPair generateRSAKeyPair() throws Exception {
+        SecureRandom secureRandom = new SecureRandom();
+
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+
+        keyPairGenerator.initialize(2048, secureRandom);
+
+        return keyPairGenerator.generateKeyPair();
     }
 }

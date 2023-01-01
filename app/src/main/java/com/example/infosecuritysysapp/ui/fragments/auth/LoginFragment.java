@@ -1,8 +1,13 @@
 package com.example.infosecuritysysapp.ui.fragments.auth;
 
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_ID;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
+import static com.example.infosecuritysysapp.helper.encryption.DigitalSignatureTools.createDigitalSignature;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrievePrivateKey;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESEncryption;
 
 import android.annotation.SuppressLint;
@@ -22,6 +27,7 @@ import com.example.infosecuritysysapp.config.AppConstants;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
 import com.example.infosecuritysysapp.helper.MyIP;
+import com.example.infosecuritysysapp.helper.encryption.DigitalSignatureTools;
 import com.example.infosecuritysysapp.helper.encryption.EncryptionConverters;
 import com.example.infosecuritysysapp.helper.encryption.EncryptionTools;
 import com.example.infosecuritysysapp.model.PersonMessageModel;
@@ -74,7 +80,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
     }
 
     private void onTestClicked() throws Exception{
-        SocketIO.getInstance().send(new BaseSocketModel<>("send", new PersonMessageModel(MyIP.getDeviceIp(), "0991423014", "09999999999", encryptMessage())).create());
+        String encryptedMessage = encryptMessage();
+        String digitalSignature = convertByteToHexadecimal(createDigitalSignature(hexStringToByteArray(encryptedMessage), retrievePrivateKey(GET_USER_PRIVATE_KEY())));
+        SocketIO.getInstance().send(
+        new BaseSocketModel<>(
+        "send"
+        , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE(), "09999999999", encryptedMessage, digitalSignature)).create());
     }
 
     private String encryptMessage() throws Exception {

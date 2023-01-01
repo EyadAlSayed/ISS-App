@@ -38,6 +38,22 @@ public class AppSharedPreferences {
         return sp.getString("userPhoneNumber", null);
     }
 
+    public static void CACHE_USER_PRIVATE_KEY(String privateKey){
+        spEdit.putString("userPrivateKey", privateKey).apply();
+    }
+
+    public static String GET_USER_PRIVATE_KEY(){
+        return sp.getString("userPrivateKey", null);
+    }
+
+    public static void CACHE_USER_PUBLIC_KEY(String publicKey){
+        spEdit.putString("userPublicKey", publicKey).apply();
+    }
+
+    public static String GET_USER_PUBLIC_KEY(){
+        return sp.getString("userPublicKey", null);
+    }
+
     public static void CACHE_USER_ID(int userId) {
         spEdit.putInt("USER_ID", userId).apply();
     }

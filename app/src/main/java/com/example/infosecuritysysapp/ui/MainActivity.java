@@ -1,10 +1,16 @@
 package com.example.infosecuritysysapp.ui;
 
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PRIVATE_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PUBLIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PUBLIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.InitSharedPreferences;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrievePublicKey;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionKeysUtils.generateRSAKeyPair;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryption;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +30,8 @@ import com.example.infosecuritysysapp.network.ISocket;
 import com.example.infosecuritysysapp.network.SocketIO;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.LoginFragment;
+
+import java.security.KeyPair;
 
 import javax.crypto.SecretKey;
 
@@ -48,10 +56,26 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         storeServerPublicKey();
         try {
             createAndSendEncryptedSessionKey();
+            // if private key already generated, no need to regenerate keys and resend public key to server.
+            if(GET_USER_PRIVATE_KEY() == null)
+                createKeyPairsAndSendPublicKey();
         } catch (Exception e) {
             e.printStackTrace();
         }
         FN.addFixedNameFadeFragment(MAIN_FC,this,new LoginFragment());
+    }
+
+    private void createKeyPairsAndSendPublicKey() throws Exception {
+        createKeyPairs();
+        SocketIO.getInstance().send(new BaseSocketModel<>
+                ("storing"
+                , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE(), null, GET_USER_PUBLIC_KEY())).create());
+    }
+
+    private void createKeyPairs() throws Exception {
+        KeyPair keyPair = generateRSAKeyPair();
+        CACHE_USER_PRIVATE_KEY(convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
+        CACHE_USER_PUBLIC_KEY(convertByteToHexadecimal(keyPair.getPublic().getEncoded()));
     }
 
     private void storeServerPublicKey(){
