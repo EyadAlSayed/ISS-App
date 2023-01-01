@@ -75,7 +75,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
     }
 
     private void onTestClicked() throws Exception{
-        SocketIO.getInstance().send(new BaseSocketModel<>("send", new PersonMessageModel(MyIP.getDeviceIp(), "0991423014", "09999999999", encryptMessage(), "")).create());
+        SocketIO.getInstance().send(new BaseSocketModel<>("send", new PersonMessageModel(MyIP.getDeviceIp(), "0991423014", "09999999999", encryptMessage())).create());
     }
 
     private String encryptMessage() throws Exception {

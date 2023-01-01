@@ -38,11 +38,4 @@ public class BaseSocketModel<T> implements Serializable {
         return new Gson().fromJson(json,BaseSocketModel.class);
     }
 
-    public String create(){
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("methodName",methodName);
-        jsonObject.addProperty("methodBody",methodBody);
-        return jsonObject.toString();
-    }
-
 }

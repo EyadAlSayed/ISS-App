@@ -14,8 +14,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76c54b73-ec2b-4c86-aa56-db456be47ce0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/helper/encryption/EncryptionConverters.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/helper/encryption/EncryptionKeysUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/helper/encryption/EncryptionTools.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/config/AppConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/config/AppConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/config/AppSharedPreferences.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/config/AppSharedPreferences.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/model/PersonMessageModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/model/PersonMessageModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/model/socket/BaseSocketModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/model/socket/BaseSocketModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/api/API.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/network/api/API.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/auth/LoginFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/auth/LoginFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/adapter/ChatMessagesAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/infosecuritysysapp/ui/fragments/home/adapter/ChatMessagesAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_message_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_message_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_message_out.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_message_out.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
