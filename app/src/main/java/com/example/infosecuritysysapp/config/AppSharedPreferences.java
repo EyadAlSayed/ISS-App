@@ -47,14 +47,6 @@ public class AppSharedPreferences {
         return sp.getString("USER_PHONE_NUMBER", null);
     }
 
-    public static void CACHE_USER_SYMMETRIC_KEY(String symmetricKey) {
-        sp.edit().putString("SYMMETRIC_KEY", symmetricKey).apply();
-    }
-
-    public static String GET_SYMMETRIC_KEY() {
-        return sp.getString("SYMMETRIC_KEY", null);
-    }
-
     public static String GET_BASE_URL() {
         return sp.getString("BASE_URL", BASE_URL);
     }

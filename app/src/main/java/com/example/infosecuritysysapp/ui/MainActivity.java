@@ -1,6 +1,7 @@
 package com.example.infosecuritysysapp.ui;
 
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
+import static com.example.infosecuritysysapp.config.AppConstants.sessionKey;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PUBLIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
@@ -10,8 +11,10 @@ import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_IS_
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.InitSharedPreferences;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrievePublicKey;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionKeysUtils.generateRSAKeyPair;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESDecryption;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryption;
 
 
@@ -74,14 +77,11 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         SocketIO.getInstance().initWebSocketAndConnect(this);
         InitSharedPreferences(this);
         storeServerPublicKey();
-        try {
-            createAndSendEncryptedSessionKey();
-            // if private key already generated, no need to regenerate keys and resend public key to server.
-            if(GET_USER_PRIVATE_KEY() == null)
-                createKeyPairsAndSendPublicKey();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            updateSessionKey();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         openFragment();
     }
 
@@ -101,21 +101,8 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         else super.onBackPressed();
     }
 
-    private void createKeyPairsAndSendPublicKey() throws Exception {
-        createKeyPairs();
-        SocketIO.getInstance().send(new BaseSocketModel<>
-                ("storing"
-                , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, GET_USER_PUBLIC_KEY(),GET_USER_PHONE_NUMBER())).toJson());
-    }
-
-    private void createKeyPairs() throws Exception {
-        KeyPair keyPair = generateRSAKeyPair();
-        CACHE_USER_PRIVATE_KEY(convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
-        CACHE_USER_PUBLIC_KEY(convertByteToHexadecimal(keyPair.getPublic().getEncoded()));
-    }
-
     private void storeServerPublicKey(){
-        new ApiClient().getAPI().getServerPublicKey().enqueue(new Callback<String>() {
+        new ApiClient().getAPI().serverHandshaking().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if(response.isSuccessful()){
@@ -136,13 +123,21 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         });
     }
 
-    private void createAndSendEncryptedSessionKey() throws Exception {
+    //this function is for creating session key for each session established.
+    private void updateSessionKey() throws Exception {
         SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
         AppConstants.sessionKey = sessionKey;
         String encryptedSessionKey = convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey));
-        SocketIO.getInstance().send(new BaseSocketModel<>("handshaking", new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, encryptedSessionKey,GET_USER_PHONE_NUMBER())).toJson());
-        // IF WE CAN'T GET USER'S ID FROM DEVICE IP IN SERVER.. THEN THIS FUNCTION SHOULD BE WRITTEN
-        // IN "LoginFragment" -> onLoginButtonClicked, SO WE CAN GET USER'S ID FROM USER'S PHONE NUMBER.
+        SocketIO.getInstance().send(new BaseSocketModel<>("UPDATE_SESSION_KEY", new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, encryptedSessionKey,GET_USER_PHONE_NUMBER())).toJson());
+    }
+
+    private String decryptMessage(String message){
+        try {
+            return do_AESDecryption(hexStringToByteArray(message), sessionKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -154,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements ISocket {
 
     @Override
     public void successfulSend(String message) {
-        runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
+        runOnUiThread(() -> Toast.makeText(MainActivity.this, decryptMessage(message), Toast.LENGTH_LONG).show());
     }
 
     @Override

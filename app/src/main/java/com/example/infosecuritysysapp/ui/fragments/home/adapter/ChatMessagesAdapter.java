@@ -1,33 +1,21 @@
 package com.example.infosecuritysysapp.ui.fragments.home.adapter;
 
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESDecryption;
-
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SYMMETRIC_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
-import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.do_AESDecryption;
-import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.hexStringToByteArray;
-import static com.example.infosecuritysysapp.helper.SymmetricEncryptionTools.retrieveSecretKey;
 
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
-import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESDecryption;
+
 
 import android.content.Context;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.config.AppConstants;
-import com.example.infosecuritysysapp.helper.encryption.EncryptionConverters;
-import com.example.infosecuritysysapp.helper.encryption.EncryptionTools;
+
 import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
 import com.example.infosecuritysysapp.model.PersonMessageModel;
 
@@ -88,7 +76,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
 
     private String getDecryptedMessage(PersonMessageModel model) throws Exception {
        return SymmetricEncryptionTools.do_AESDecryption(SymmetricEncryptionTools.hexStringToByteArray(model.content),
-                SymmetricEncryptionTools.retrieveSecretKey(GET_SYMMETRIC_KEY()));
+                AppConstants.sessionKey);
     }
 
 

@@ -9,16 +9,16 @@ public class BaseSocketModel<T> implements Serializable {
 
    private String methodName;
    private String methodBody;
-   private String  mac;
+   private String digitalSignature;
 
     public BaseSocketModel(String methodName, T Body) {
         this.methodName = methodName;
         this.methodBody = getJsonModel(Body);
     }
-    public BaseSocketModel(String methodName, T Body, String mac) {
+    public BaseSocketModel(String methodName, T Body, String digitalSignature) {
         this.methodName = methodName;
         this.methodBody = getJsonModel(Body);
-        this.mac = mac;
+        this.digitalSignature = digitalSignature;
     }
 
     public String getMethodName() {
@@ -37,7 +37,7 @@ public class BaseSocketModel<T> implements Serializable {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("methodName",methodName);
         jsonObject.addProperty("methodBody",methodBody);
-        jsonObject.addProperty("mac",mac);
+        jsonObject.addProperty("digitalSignature", digitalSignature);
         return jsonObject.toString();
     }
 

@@ -19,7 +19,7 @@ public interface API {
 
 
     @POST("/signup")
-    Call<ResponseBody> signup(@Query("key")String key,@Body JsonObject userObj);
+    Call<ResponseBody> signup(@Body JsonObject userObj);
 
     @POST("/login")
     Call<JsonObject> login(@Body JsonObject loginObj);
@@ -33,6 +33,6 @@ public interface API {
     @GET("/getChatMessages")
     Call<List<PersonMessageModel>> getChatMessages(@Query("phoneNumber")String phoneNumber);
 
-    @GET("get/server/public/key")
-    Call<String> getServerPublicKey();
+    @GET("/server/handshaking")
+    Call<String> serverHandshaking();
 }
