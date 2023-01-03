@@ -1,11 +1,13 @@
 package com.example.infosecuritysysapp.ui.fragments.home.chats;
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SESSION_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.helper.encryption.DigitalSignatureTools.createDigitalSignature;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrievePrivateKey;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrieveSymmetricSecretKey;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESEncryption;
 
 import android.os.Bundle;
@@ -24,7 +26,6 @@ import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.config.AppConstants;
 import com.example.infosecuritysysapp.databinding.FragmentChatMessagesBinding;
 import com.example.infosecuritysysapp.helper.MyIP;
-import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
 import com.example.infosecuritysysapp.model.PersonMessageModel;
 import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
 import com.example.infosecuritysysapp.network.SocketIO;
@@ -47,6 +48,8 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
     ChatMessagesAdapter adapter;
     IChatMessages iChatMessages;
     String receiverPhoneNumber;
+
+    String plainText;
 
     boolean isEncrypted;
 
@@ -88,6 +91,7 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
     }
 
     private PersonMessageModel getMessage(String messageContent) {
+        Log.d("ChatMessagesFragment", "getMessage: " + new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), receiverPhoneNumber, messageContent, GET_USER_PHONE_NUMBER()));
         return new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), receiverPhoneNumber, messageContent, GET_USER_PHONE_NUMBER());
     }
 
@@ -153,11 +157,16 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
 
     private void send4EncryptedMessage() {
         try {
+            Log.d("ChatMessagesFragment", "send4EncryptedMessage -> private key " + retrievePrivateKey(GET_USER_PRIVATE_KEY()));
             String encryptedMessage = getEncryptedMessage();
+            Log.d("ChatMessagesFragment", "send4EncryptedMessage -> encryptedMessage: " + encryptedMessage);
             String digitalSignature = convertByteToHexadecimal(createDigitalSignature(hexStringToByteArray(encryptedMessage), retrievePrivateKey(GET_USER_PRIVATE_KEY())));
             PersonMessageModel personMessageModel = getMessage(encryptedMessage);
             SocketIO.getInstance().send(new BaseSocketModel<>("send", personMessageModel, digitalSignature).toJson());
-            adapter.addMessage(new PersonMessageModel(MyIP.getDeviceIp(),GET_USER_PHONE_NUMBER(),receiverPhoneNumber,encryptedMessage,GET_USER_PHONE_NUMBER()));
+            //adapter.addMessage(new PersonMessageModel(MyIP.getDeviceIp(),GET_USER_PHONE_NUMBER(),receiverPhoneNumber,encryptedMessage,GET_USER_PHONE_NUMBER()));
+            adapter.addMessage(new PersonMessageModel(MyIP.getDeviceIp(),GET_USER_PHONE_NUMBER(),receiverPhoneNumber,plainText,GET_USER_PHONE_NUMBER()));
+            Log.d("ChatMessagesFragment", "send4EncryptedMessage -> digitalSignature: " + digitalSignature);
+            Log.d("ChatMessagesFragment", "send4EncryptedMessage -> plainText: " + plainText);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,15 +174,18 @@ public class ChatMessagesFragment extends Fragment implements IChatMessages, Vie
 
     private String encryptMessage() throws Exception {
         String message = binding.messageContent.getText().toString();
-        return convertByteToHexadecimal(do_AESEncryption(message, AppConstants.sessionKey));
+        return convertByteToHexadecimal(do_AESEncryption(message, retrieveSymmetricSecretKey(GET_SESSION_KEY())));
     }
 
 
     private String getEncryptedMessage() throws Exception {
-        String plainText = binding.messageContent.getText().toString();
+        plainText = binding.messageContent.getText().toString();
         binding.messageContent.getText().clear();
-        byte[] cipherText = do_AESEncryption(plainText, AppConstants.sessionKey);
-        return SymmetricEncryptionTools.convertByteToHexadecimal(cipherText);
+        byte[] cipherText = do_AESEncryption(plainText, retrieveSymmetricSecretKey(GET_SESSION_KEY()));
+        Log.d("ChatMessagesFragment", "getEncryptedMessage -> session key " + retrieveSymmetricSecretKey(GET_SESSION_KEY()));
+        Log.d("ChatMessagesFragment", "getEncryptedMessage -> plainText " + plainText);
+        Log.d("ChatMessagesFragment", "getEncryptedMessage: " + convertByteToHexadecimal(cipherText));
+        return convertByteToHexadecimal(cipherText);
     }
 
     @Override

@@ -1,10 +1,15 @@
 package com.example.infosecuritysysapp.ui.fragments.home.adapter;
 
 
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_SESSION_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrieveSymmetricSecretKey;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESDecryption;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.config.AppConstants;
 
-import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
 import com.example.infosecuritysysapp.model.PersonMessageModel;
 
 import java.util.List;
@@ -75,8 +79,10 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
     }
 
     private String getDecryptedMessage(PersonMessageModel model) throws Exception {
-       return SymmetricEncryptionTools.do_AESDecryption(SymmetricEncryptionTools.hexStringToByteArray(model.content),
-                AppConstants.sessionKey);
+        Log.d("ChatMessagesAdapter", "getDecryptedMessage: " + do_AESDecryption(hexStringToByteArray(model.content),
+                retrieveSymmetricSecretKey(GET_SESSION_KEY())));
+       return do_AESDecryption(hexStringToByteArray(model.content),
+                retrieveSymmetricSecretKey(GET_SESSION_KEY()));
     }
 
 
