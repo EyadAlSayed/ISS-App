@@ -70,4 +70,22 @@ public class AppSharedPreferences {
     public static String GET_USER_PUBLIC_KEY(){
         return sp.getString("userPublicKey", null);
     }
+
+
+    public static void CACHE_USER_SESSION_KEY(String sessionKey){
+        spEdit.putString("sessionKey", sessionKey).apply();
+    }
+
+    public static String GET_USER_SESSION_KEY(){
+        return sp.getString("sessionKey", null);
+    }
+
+
+    public static void CACHE_USER_SERVER_KEY(String sessionKey){
+        spEdit.putString("serverKey", sessionKey).apply();
+    }
+
+    public static String GET_USER_SERVER_KEY(){
+        return sp.getString("serverKey", null);
+    }
 }

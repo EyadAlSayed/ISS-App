@@ -3,6 +3,7 @@ package com.example.infosecuritysysapp.ui.fragments.auth;
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PUBLIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SESSION_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PUBLIC_KEY;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,12 +149,15 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
     private void createKeyPairs() throws Exception {
         KeyPair keyPair = generateRSAKeyPair();
         CACHE_USER_PRIVATE_KEY(convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
-        CACHE_USER_PUBLIC_KEY(convertByteToHexadecimal(keyPair.getPublic().getEncoded()));
+        String key = convertByteToHexadecimal(keyPair.getPublic().getEncoded());
+        Log.e("SocketIO", "createKeyPairs: "+key);
+        CACHE_USER_PUBLIC_KEY(key);
     }
 
     private String createAndSendEncryptedSessionKey() throws Exception {
         SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
         AppConstants.sessionKey = sessionKey;
+        CACHE_USER_SESSION_KEY(convertByteToHexadecimal(sessionKey.getEncoded()));
         return convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey));
 
     }
