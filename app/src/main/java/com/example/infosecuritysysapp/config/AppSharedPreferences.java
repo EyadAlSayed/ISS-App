@@ -88,4 +88,14 @@ public class AppSharedPreferences {
     public static String GET_USER_SERVER_KEY(){
         return sp.getString("serverKey", null);
     }
+
+    public static void CACHE_SESSION_KEY(String sessionKey){
+        Log.d("SharedPreferences", "cache session key: " + sessionKey);
+        spEdit.putString("sessionKey", sessionKey).apply();
+    }
+
+    public static String GET_SESSION_KEY(){
+        Log.d("SharedPreferences", "get session key: " + sp.getString("sessionKey", null));
+        return sp.getString("sessionKey", null);
+    }
 }

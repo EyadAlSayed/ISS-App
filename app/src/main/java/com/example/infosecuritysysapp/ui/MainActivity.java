@@ -77,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         SocketIO.getInstance().initWebSocketAndConnect(this);
         InitSharedPreferences(this);
         storeServerPublicKey();
+//        try {
+//            updateSessionKey();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         openFragment();
     }
 
@@ -104,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements ISocket {
                 if(response.isSuccessful()){
                     try {
                         serverPublicKey = retrievePublicKey(response.body());
-
+                        Log.d("MainActivity", "onResponse: serverPublicKey" + convertByteToHexadecimal(serverPublicKey.getEncoded()));
+                        Log.d("MainActivity", "onResponse: response" + response.body());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

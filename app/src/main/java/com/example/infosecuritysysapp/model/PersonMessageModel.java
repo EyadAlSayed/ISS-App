@@ -62,4 +62,18 @@ public class PersonMessageModel implements Serializable {
     public static PersonMessageModel fromJson(String json) {
         return new Gson().fromJson(json, PersonMessageModel.class);
     }
+
+    @Override
+    public String toString() {
+        return "PersonMessageModel{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", fromUser='" + fromUser + '\'' +
+                ", toUser='" + toUser + '\'' +
+                ", sender='" + sender + '\'' +
+                ", digitalSignature='" + digitalSignature + '\'' +
+                ", mac='" + mac + '\'' +
+                ", deviceIp='" + deviceIp + '\'' +
+                '}';
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.infosecuritysysapp.ui.fragments.auth;
 
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_SESSION_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PUBLIC_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SESSION_KEY;
@@ -78,17 +79,19 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
         jsonObject.addProperty("password",binding.password.getText().toString());
         jsonObject.addProperty("sessionKey", createAndSendEncryptedSessionKey());
         jsonObject.addProperty("userPublicKey", createKeyPairsAndSendPublicKey());
+        Log.d("SignUpFragment", "onSignUpClicked: json -> sessionKey:" + jsonObject.get("sessionKey").getAsString());
+        Log.d("SignUpFragment", "onSignUpClicked: json -> userPublicKey:" + jsonObject.get("userPublicKey").getAsString());
         iSignUp.signUp(jsonObject);
     }
 
-    private String getSymmetricKey(){
-        try {
-            return SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
+//    private String getSymmetricKey(){
+//        try {
+//            return SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return "";
+//    }
 
     @Override
     public void onClick(View view) {
@@ -136,6 +139,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
 
     private String createKeyPairsAndSendPublicKey() throws Exception {
         createKeyPairs();
+        Log.d("SignUpFragment", "cached user public key: " + GET_USER_PUBLIC_KEY());
         return GET_USER_PUBLIC_KEY();
     }
 
@@ -148,6 +152,8 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
 
     private void createKeyPairs() throws Exception {
         KeyPair keyPair = generateRSAKeyPair();
+        Log.d("SignUpFragment", "createKeyPairs -> private key: " + convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
+        Log.d("SignUpFragment", "createKeyPairs -> public key: " + convertByteToHexadecimal(keyPair.getPublic().getEncoded()));
         CACHE_USER_PRIVATE_KEY(convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
         String key = convertByteToHexadecimal(keyPair.getPublic().getEncoded());
         Log.e("SocketIO", "createKeyPairs: "+key);
@@ -156,8 +162,10 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
 
     private String createAndSendEncryptedSessionKey() throws Exception {
         SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
-        AppConstants.sessionKey = sessionKey;
-        CACHE_USER_SESSION_KEY(convertByteToHexadecimal(sessionKey.getEncoded()));
+//        AppConstants.sessionKey = sessionKey;
+        CACHE_SESSION_KEY(convertByteToHexadecimal(sessionKey.getEncoded()));
+        Log.d("SignUpFragment", "encryptedSessionKey: " + convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey)));
+        Log.d("SignUpFragment", "serverPublicKey: " + convertByteToHexadecimal(serverPublicKey.getEncoded()));
         return convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey));
 
     }
