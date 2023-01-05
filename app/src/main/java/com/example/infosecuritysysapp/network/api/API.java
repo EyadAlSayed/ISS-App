@@ -35,4 +35,7 @@ public interface API {
 
     @GET("/server/handshaking")
     Call<String> serverHandshaking();
+
+    @GET("/updatekeys")
+    Call<String> updatekeys(@Query("userId") int userId,@Query("session") String session,@Query("public") String _publickey);
 }

@@ -1,5 +1,7 @@
 package com.example.infosecuritysysapp.helper.encryption;
 
+import android.annotation.SuppressLint;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
@@ -36,6 +38,14 @@ public class EncryptionTools {
 
         return cipher.doFinal(plainText.getBytes());
     }
+    public static byte[] do_RSAEncryptionB(byte[] plainText, PublicKey publicKey) throws Exception {
+        @SuppressLint("DeprecatedProvider") Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPwithSHA1andMGF1Padding","BC");
+
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+        return cipher.doFinal(plainText);
+    }
+
 
     public static String do_RSADecryption(byte[] cipherText, PrivateKey privateKey) throws Exception {
         Cipher cipher = Cipher.getInstance(RSA);

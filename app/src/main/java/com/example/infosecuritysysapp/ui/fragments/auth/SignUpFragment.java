@@ -1,17 +1,17 @@
 package com.example.infosecuritysysapp.ui.fragments.auth;
 
+import static com.example.infosecuritysysapp.config.AppConstants.eyadKey;
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_SESSION_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PUBLIC_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_SESSION_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
-import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PUBLIC_KEY;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionKeysUtils.generateRSAKeyPair;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESEncryption;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSADecryption;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryption;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryptionB;
 
 import android.os.Bundle;
 
@@ -24,23 +24,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.infosecuritysysapp.R;
-import com.example.infosecuritysysapp.config.AppConstants;
 import com.example.infosecuritysysapp.databinding.FragmentSignUpBinding;
 import com.example.infosecuritysysapp.helper.FN;
-import com.example.infosecuritysysapp.helper.MyIP;
-import com.example.infosecuritysysapp.helper.SymmetricEncryptionTools;
 import com.example.infosecuritysysapp.helper.encryption.EncryptionKeysUtils;
-import com.example.infosecuritysysapp.model.PersonMessageModel;
-import com.example.infosecuritysysapp.model.socket.BaseSocketModel;
-import com.example.infosecuritysysapp.network.SocketIO;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ISignUp;
 import com.google.gson.JsonObject;
 
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -72,43 +69,23 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
         binding.signupBtn.setOnClickListener(this);
     }
 
-    private void onSignUpClicked() throws Exception {
-        JsonObject jsonObject= new JsonObject();
-        jsonObject.addProperty("name",binding.userName.getText().toString());
-        jsonObject.addProperty("phoneNumber",binding.phoneNumber.getText().toString());
-        jsonObject.addProperty("password",binding.password.getText().toString());
-        jsonObject.addProperty("sessionKey", createAndSendEncryptedSessionKey());
+    private void onSignUpClicked() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("name", binding.userName.getText().toString());
+        jsonObject.addProperty("phoneNumber", binding.phoneNumber.getText().toString());
+        jsonObject.addProperty("password", binding.password.getText().toString());
+        jsonObject.addProperty("sessionKey", getEncryptedSessionKey());
         jsonObject.addProperty("userPublicKey", createKeyPairsAndSendPublicKey());
-        Log.d("SignUpFragment", "onSignUpClicked: json -> sessionKey:" + jsonObject.get("sessionKey").getAsString());
-        Log.d("SignUpFragment", "onSignUpClicked: json -> userPublicKey:" + jsonObject.get("userPublicKey").getAsString());
         iSignUp.signUp(jsonObject);
     }
 
-//    private String getSymmetricKey(){
-//        try {
-//            return SymmetricEncryptionTools.convertByteToHexadecimal(SymmetricEncryptionTools.createAESKey().getEncoded());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return "";
-//    }
-
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.signup_btn: {
-                try {
-                    onSignUpClicked();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-            default:
-                break;
+        try {
+            onSignUpClicked();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -116,16 +93,8 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
         new ApiClient().getAPI().signup(jsonObject).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                if(response.isSuccessful()){
-                  //  try {
-                        //createAndSendEncryptedSessionKey();
-                        // if private key already generated, no need to regenerate keys and resend public key to server.
-//                        if(GET_USER_PRIVATE_KEY() == null)
-//                            createKeyPairsAndSendPublicKey();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-                    FN.addFixedNameFadeFragment(MAIN_FC,requireActivity(),new LoginFragment());
+                if (response.isSuccessful()) {
+                    FN.addFixedNameFadeFragment(MAIN_FC, requireActivity(), new LoginFragment());
                 }
             }
 
@@ -137,45 +106,43 @@ public class SignUpFragment extends Fragment implements View.OnClickListener, IS
 
     }
 
-    private String createKeyPairsAndSendPublicKey() throws Exception {
-        createKeyPairs();
-        Log.d("SignUpFragment", "cached user public key: " + GET_USER_PUBLIC_KEY());
-        return GET_USER_PUBLIC_KEY();
-    }
-
-//    private void createKeyPairsAndSendPublicKey() throws Exception {
-//        createKeyPairs();
-//        SocketIO.getInstance().send(new BaseSocketModel<>
-//                ("storing"
-//                        , new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, GET_USER_PUBLIC_KEY(),GET_USER_PHONE_NUMBER())).toJson());
-//    }
-
-    private void createKeyPairs() throws Exception {
-        KeyPair keyPair = generateRSAKeyPair();
-        Log.d("SignUpFragment", "createKeyPairs -> private key: " + convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
-        Log.d("SignUpFragment", "createKeyPairs -> public key: " + convertByteToHexadecimal(keyPair.getPublic().getEncoded()));
-        CACHE_USER_PRIVATE_KEY(convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
-        String key = convertByteToHexadecimal(keyPair.getPublic().getEncoded());
-        Log.e("SocketIO", "createKeyPairs: "+key);
+    private String createKeyPairsAndSendPublicKey() {
+        String key = createKeyPairs();
         CACHE_USER_PUBLIC_KEY(key);
+        return key;
     }
 
-    private String createAndSendEncryptedSessionKey() throws Exception {
-        SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
-//        AppConstants.sessionKey = sessionKey;
-        CACHE_SESSION_KEY(convertByteToHexadecimal(sessionKey.getEncoded()));
-        Log.d("SignUpFragment", "encryptedSessionKey: " + convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey)));
-        Log.d("SignUpFragment", "serverPublicKey: " + convertByteToHexadecimal(serverPublicKey.getEncoded()));
-        return convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey));
-
+    private String createKeyPairs() {
+        try {
+            KeyPair keyPair = generateRSAKeyPair();
+            CACHE_USER_PRIVATE_KEY(convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
+            return convertByteToHexadecimal(keyPair.getPublic().getEncoded());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
-//    private void createAndSendEncryptedSessionKey() throws Exception {
-//        SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
-//        AppConstants.sessionKey = sessionKey;
-//        String encryptedSessionKey = convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey));
-//        SocketIO.getInstance().send(new BaseSocketModel<>("handshaking", new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, encryptedSessionKey,GET_USER_PHONE_NUMBER())).toJson());
-//        // IF WE CAN'T GET USER'S ID FROM DEVICE IP IN SERVER.. THEN THIS FUNCTION SHOULD BE WRITTEN
-//        // IN "LoginFragment" -> onLoginButtonClicked, SO WE CAN GET USER'S ID FROM USER'S PHONE NUMBER.
-//    }
+    private String getEncryptedSessionKey() {
+        try {
+            SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                return Base64.getEncoder().encodeToString(sessionKey.getEncoded());
+//            }
+
+
+//            Log.e("EYAD", "getEncryptedSessionKey: "+new String(do_RSAEncryptionB(sessionKey.getEncoded(),publicKey)));
+//            Log.e("EYAD", "getEncryptedSessionKey: "+do_RSADecryption(sessionKey.getEncoded(),privateKey));
+            String key = convertByteToHexadecimal(do_RSAEncryptionB(sessionKey.getEncoded(), serverPublicKey));
+            CACHE_SESSION_KEY(convertByteToHexadecimal(sessionKey.getEncoded()));
+            return key;
+
+        } catch (Exception e) {
+            Log.e("EYAD", "getEncryptedSessionKey: " + e);
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
 }

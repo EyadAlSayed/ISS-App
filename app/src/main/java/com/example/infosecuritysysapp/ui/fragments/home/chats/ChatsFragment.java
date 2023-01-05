@@ -4,6 +4,7 @@ import static com.example.infosecuritysysapp.config.AppSharedPreferences.CLEAR_D
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_ID;
 import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -87,6 +88,7 @@ public class ChatsFragment extends Fragment implements IChats, View.OnClickListe
         });
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch (view.getId()){

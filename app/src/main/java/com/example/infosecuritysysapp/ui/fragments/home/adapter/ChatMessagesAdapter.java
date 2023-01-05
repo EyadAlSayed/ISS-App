@@ -45,6 +45,11 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
         notifyDataSetChanged();
     }
 
+    public void addMessageEn(PersonMessageModel item) {
+        this.items.add(item);
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ChatMessagesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -79,8 +84,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
     }
 
     private String getDecryptedMessage(PersonMessageModel model) throws Exception {
-        Log.d("ChatMessagesAdapter", "getDecryptedMessage: " + do_AESDecryption(hexStringToByteArray(model.content),
-                retrieveSymmetricSecretKey(GET_SESSION_KEY())));
+                retrieveSymmetricSecretKey(GET_SESSION_KEY());
        return do_AESDecryption(hexStringToByteArray(model.content),
                 retrieveSymmetricSecretKey(GET_SESSION_KEY()));
     }

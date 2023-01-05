@@ -4,6 +4,7 @@ import static android.os.Looper.getMainLooper;
 import static com.example.infosecuritysysapp.config.AppConstants.CHAT_RECEIVED;
 import static com.example.infosecuritysysapp.config.AppConstants.CHAT_RECEIVED_E;
 import static com.example.infosecuritysysapp.config.AppConstants.CHAT_SEND;
+import static com.example.infosecuritysysapp.config.AppConstants.CHAT_SEND_D;
 import static com.example.infosecuritysysapp.config.AppConstants.CHAT_SEND_E;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_IS_LOGIN;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
@@ -82,11 +83,19 @@ public class SocketIO extends WebSocketClient {
                 break;
             }
 
+            case CHAT_SEND_D: {
+                Log.e(TAG, "onTextReceived: D");
+                iSocket.receivedMessage(baseSocketModel.getMethodBody());
+                break;
+            }
+
             case CHAT_RECEIVED_E:{
                 Log.e(TAG, "onTextReceived: "+CHAT_RECEIVED_E );
                 iSocket.successfulSend(baseSocketModel.getMethodBody());
                 break;
             }
+
+
 
             default:
                 break;

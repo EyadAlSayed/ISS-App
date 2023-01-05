@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.infosecuritysysapp.R;
 import com.example.infosecuritysysapp.databinding.FragmentLoginBinding;
 import com.example.infosecuritysysapp.helper.FN;
+import com.example.infosecuritysysapp.helper.encryption.EncryptionKeysUtils;
 import com.example.infosecuritysysapp.network.api.ApiClient;
 import com.example.infosecuritysysapp.ui.fragments.auth.presentation.ILogin;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
@@ -96,6 +97,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, ILo
                         CACHE_IS_LOGIN();
                         CACHE_USER_ID(response.body().get("userId").getAsInt());
                         CACHE_USER_PHONE_NUMBER(jsonObject.get("phoneNumber").getAsString());
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

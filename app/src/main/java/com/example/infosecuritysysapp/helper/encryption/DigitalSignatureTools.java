@@ -16,7 +16,6 @@ public class DigitalSignatureTools {
         Signature signature = Signature.getInstance(SIGNING_ALGORITHM);
         signature.initSign(key);
         signature.update(input);
-        Log.d("DigitalSignatureTools", "createDigitalSignature: " + convertByteToHexadecimal(signature.sign()));
         return signature.sign();
     }
 

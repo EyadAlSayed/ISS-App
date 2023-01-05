@@ -1,9 +1,12 @@
 package com.example.infosecuritysysapp.ui;
 
+import static com.example.infosecuritysysapp.config.AppConstants.eyadKey;
 import static com.example.infosecuritysysapp.config.AppConstants.serverPublicKey;
 import static com.example.infosecuritysysapp.config.AppConstants.sessionKey;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_SESSION_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.CACHE_USER_PUBLIC_KEY;
+import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_ID;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PHONE_NUMBER;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PRIVATE_KEY;
 import static com.example.infosecuritysysapp.config.AppSharedPreferences.GET_USER_PUBLIC_KEY;
@@ -13,9 +16,11 @@ import static com.example.infosecuritysysapp.helper.FN.MAIN_FC;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.convertByteToHexadecimal;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.hexStringToByteArray;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrievePublicKey;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionConverters.retrieveSymmetricSecretKey;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionKeysUtils.generateRSAKeyPair;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_AESDecryption;
 import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryption;
+import static com.example.infosecuritysysapp.helper.encryption.EncryptionTools.do_RSAEncryptionB;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,6 +61,7 @@ import javax.crypto.SecretKey;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatMessagesFragment;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.ChatsFragment;
 import com.example.infosecuritysysapp.ui.fragments.home.chats.presentation.IChatMessages;
@@ -77,11 +83,6 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         SocketIO.getInstance().initWebSocketAndConnect(this);
         InitSharedPreferences(this);
         storeServerPublicKey();
-//        try {
-//            updateSessionKey();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
         openFragment();
     }
 
@@ -102,15 +103,24 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         else super.onBackPressed();
     }
 
-    private void storeServerPublicKey(){
+    private void storeServerPublicKey() {
         new ApiClient().getAPI().serverHandshaking().enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     try {
                         serverPublicKey = retrievePublicKey(response.body());
-                        Log.d("MainActivity", "onResponse: serverPublicKey" + convertByteToHexadecimal(serverPublicKey.getEncoded()));
-                        Log.d("MainActivity", "onResponse: response" + response.body());
+                        SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
+
+                        String sesKey = convertByteToHexadecimal(sessionKey.getEncoded());
+                        CACHE_SESSION_KEY(sesKey);
+
+                        KeyPair keyPair = EncryptionKeysUtils.generateRSAKeyPair();
+                        String pubKey = convertByteToHexadecimal(keyPair.getPublic().getEncoded());
+                        CACHE_USER_PRIVATE_KEY(convertByteToHexadecimal(keyPair.getPrivate().getEncoded()));
+                        CACHE_USER_PUBLIC_KEY(pubKey);
+
+                        cache(sesKey,pubKey);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -126,15 +136,25 @@ public class MainActivity extends AppCompatActivity implements ISocket {
         });
     }
 
-    //this function is for creating session key for each session established.
-    private void updateSessionKey() throws Exception {
-        SecretKey sessionKey = EncryptionKeysUtils.createAESKey();
-        AppConstants.sessionKey = sessionKey;
-        String encryptedSessionKey = convertByteToHexadecimal(do_RSAEncryption(convertByteToHexadecimal(sessionKey.getEncoded()), serverPublicKey));
-        SocketIO.getInstance().send(new BaseSocketModel<>("UPDATE_SESSION_KEY", new PersonMessageModel(MyIP.getDeviceIp(), GET_USER_PHONE_NUMBER(), null, encryptedSessionKey,GET_USER_PHONE_NUMBER())).toJson());
+    private void cache(String sesKey,String pubKey){
+        if(GET_IS_LOGIN()){
+            new ApiClient().getAPI().updatekeys(GET_USER_ID(),sesKey,pubKey).enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.e("ISS", "onResponse: "+response.isSuccessful());
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.e("ISS", "onFailure: "+t );
+                }
+            });
+        }
     }
 
-    private String decryptMessage(String message){
+
+
+    private String decryptMessage(String message) {
         try {
             return do_AESDecryption(hexStringToByteArray(message), sessionKey);
         } catch (Exception e) {
